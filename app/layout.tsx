@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { IBM_Plex_Mono, IBM_Plex_Sans, Spectral } from 'next/font/google';
 import { MotionConfig } from 'motion/react';
 import './globals.css';
@@ -65,6 +65,9 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.ico',
   },
+};
+
+export const viewport: Viewport = {
   themeColor: '#161825',
 };
 

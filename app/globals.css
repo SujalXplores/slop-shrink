@@ -70,7 +70,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  /* v4: border utilities default to currentColor — pin a sensible hairline instead. */
+  /* v4: border utilities default to currentColor -- pin a sensible hairline instead. */
   *,
   ::before,
   ::after {

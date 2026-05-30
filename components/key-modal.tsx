@@ -238,7 +238,7 @@ export function KeyModal() {
                     )}
                   </AutocompleteList>
                   <AutocompleteEmpty className="font-mono text-ink-faint">
-                    no match — type any model id
+                    no match · type any model id
                   </AutocompleteEmpty>
                 </AutocompleteContent>
               </Autocomplete>
@@ -255,14 +255,14 @@ export function KeyModal() {
                 {modelsStatus === 'loaded' &&
                   (models.length > 0 ? (
                     <span className="text-signal-dim">
-                      {models.length} compatible models — pick or type one
+                      {models.length} compatible models · pick or type one
                     </span>
                   ) : (
-                    <span>no compatible models returned — type a model id</span>
+                    <span>no compatible models returned · type a model id</span>
                   ))}
                 {modelsStatus === 'error' && (
                   <span className="text-slop-dim">
-                    ✕ {modelsError} — you can still type a model id
+                    ✕ {modelsError} · you can still type a model id
                   </span>
                 )}
                 {modelsStatus === 'idle' &&

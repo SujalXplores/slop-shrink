@@ -36,23 +36,15 @@ interface ProviderEntry {
   ) => LanguageModel | Promise<LanguageModel>;
 }
 
-export const PROVIDER_ENV_KEY = {
-  openai: "OPENAI_API_KEY",
-  anthropic: "ANTHROPIC_API_KEY",
-  google: "GOOGLE_GENERATIVE_AI_API_KEY",
-  openrouter: "OPENROUTER_API_KEY",
-} as const satisfies Partial<Record<ProviderId, string>>;
-
 function resolveKey(
   override: string | undefined,
-  envName: string,
   provider: ProviderId,
 ): string {
-  const key = override?.trim() || process.env[envName]?.trim();
+  const key = override?.trim();
   if (!key) {
     throw new LlmError(
       "missing_api_key",
-      `No API key available for "${provider}". Add your own key in the app, or set ${envName} on the server.`,
+      `No API key available for "${provider}". Add your own key in the app.`,
       400,
     );
   }
@@ -60,10 +52,10 @@ function resolveKey(
 }
 
 export function resolveApiKey(
-  provider: keyof typeof PROVIDER_ENV_KEY,
+  provider: ProviderId,
   override?: string,
 ): string {
-  return resolveKey(override, PROVIDER_ENV_KEY[provider], provider);
+  return resolveKey(override, provider);
 }
 
 const registry: Record<ProviderId, ProviderEntry> = {
@@ -93,7 +85,7 @@ const registry: Record<ProviderId, ProviderEntry> = {
   ollama: {
     createModel: async (modelId, creds) => {
       const { createOllama } = await import("ollama-ai-provider-v2");
-      const baseURL = creds.baseURL?.trim() || process.env.OLLAMA_BASE_URL?.trim();
+      const baseURL = creds.baseURL?.trim();
       return createOllama(baseURL ? { baseURL } : undefined)(modelId);
     },
   },
@@ -124,19 +116,8 @@ export async function resolveModel(
     providerId = requestedProvider;
     modelId = overrides?.model?.trim() || PROVIDERS[providerId].defaultModel;
   } else {
-    const envProvider = process.env.LLM_PROVIDER?.trim().toLowerCase() || "openai";
-    if (!isProviderId(envProvider)) {
-      throw new LlmError(
-        "unknown_provider",
-        `Unknown LLM_PROVIDER="${envProvider}". Valid options: ${PROVIDER_IDS.join(", ")}.`,
-        500,
-      );
-    }
-    providerId = envProvider;
-    modelId =
-      overrides?.model?.trim() ||
-      process.env.LLM_MODEL?.trim() ||
-      PROVIDERS[providerId].defaultModel;
+    providerId = "openai";
+    modelId = overrides?.model?.trim() || PROVIDERS[providerId].defaultModel;
   }
 
   const model = await registry[providerId].createModel(modelId, {

@@ -28,9 +28,44 @@ const spectral = Spectral({
 });
 
 export const metadata: Metadata = {
-  title: 'SlopShrink — X-ray your reading',
+  metadataBase: new URL('https://slopshrink.vercel.app'),
+  title: {
+    default: 'SlopShrink: X-ray your reading',
+    template: '%s | SlopShrink',
+  },
   description:
     'Paste a URL or text. SlopShrink scans every paragraph for information density, collapses AI filler, and spotlights the verifiable facts in an interactive X-Ray reading view.',
+  keywords: [
+    'AI slop detector',
+    'information density',
+    'reading tool',
+    'text analysis',
+    'AI writing',
+    'content quality',
+    'article scanner',
+  ],
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    siteName: 'SlopShrink',
+    title: 'SlopShrink: X-ray your reading',
+    description:
+      'Scan any article for information density. Collapse the AI filler, spotlight the facts.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SlopShrink: X-ray your reading',
+    description:
+      'Scan any article for information density. Collapse the AI filler, spotlight the facts.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: {
+    icon: '/favicon.ico',
+  },
+  themeColor: '#161825',
 };
 
 export default function RootLayout({

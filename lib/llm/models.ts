@@ -130,7 +130,6 @@ const listers: Record<ProviderId, (creds: ListModelsCreds) => Promise<string[]>>
   ollama: async (creds) => {
     const raw =
       creds.baseURL?.trim() ||
-      process.env.OLLAMA_BASE_URL?.trim() ||
       "http://127.0.0.1:11434";
     const base = raw.replace(/\/+$/, "").replace(/\/api$/, "");
     const json = await fetchJson(`${base}/api/tags`);

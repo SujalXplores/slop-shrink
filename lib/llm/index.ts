@@ -14,7 +14,7 @@ filler ("slop").
 
 For each paragraph, return an object with exactly these fields:
 
-- isSlop (boolean): true if the paragraph is filler — it carries no verifiable
+- isSlop (boolean): true if the paragraph is filler: it carries no verifiable
   facts, figures, or actionable steps and could be deleted without losing
   information. Hallmarks of slop: clichés and buzzwords ("in today's
   fast-paced world", "leverage synergy", "at the end of the day"), vague
@@ -31,7 +31,7 @@ For each paragraph, return an object with exactly these fields:
 - extractedFacts (array of strings): the concrete, verifiable facts, figures,
   dates, named entities, or actionable steps actually stated in the paragraph,
   each as a short standalone string. Include ONLY information present in the
-  text — never infer, fabricate, or add outside knowledge. If the paragraph
+  text, never infer, fabricate, or add outside knowledge. If the paragraph
   has none, return an empty array.
 
 Rules:
@@ -41,7 +41,7 @@ Rules:
   extractedFacts should not be slop and should score higher; an empty
   extractedFacts array with only generic language is slop.
 - Judge only what is on the page. Do not reward confident tone, fluency, or
-  length — polished, grammatical marketing/motivational/AI padding is still slop.`;
+  length: polished, grammatical marketing/motivational/AI padding is still slop.`;
 
 const MAX_OUTPUT_TOKENS = 8192;
 

@@ -1,9 +1,26 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { SiteHeader } from '@/components/site-header';
 import { XRayToggle } from '@/components/xray-toggle';
 import { XRayArticle } from '@/components/xray-article';
 import { XRaySidebar } from '@/components/xray-sidebar';
 import { getScan } from '@/lib/storage';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const scan = getScan(id);
+  const title = scan?.source.title ?? id.slice(0, 8);
+  return {
+    title,
+    description: scan
+      ? `X-ray analysis of "${scan.source.title ?? 'article'}": information density scores, extracted facts, and slop detection.`
+      : 'View your X-ray scan results.',
+  };
+}
 
 export default async function ScanPage({
   params,
@@ -54,7 +71,7 @@ export default async function ScanPage({
                     no scan loaded
                   </p>
                   <p className="mt-2 max-w-sm font-read text-[15px] leading-relaxed text-ink-faint">
-                    This is where your x-rayed article will appear — facts
+                    This is where your x-rayed article will appear: facts
                     spotlighted, slop ready to collapse. Run a scan to fill it.
                   </p>
                 </div>
@@ -117,7 +134,7 @@ export default async function ScanPage({
                     </svg>
                     <div className="absolute text-center">
                       <span className="font-mono text-3xl font-semibold text-ink-faint">
-                        —
+                        --
                       </span>
                       <span className="block font-mono text-[9px] uppercase tracking-[0.2em] text-ink-faint">
                         awaiting
@@ -132,13 +149,13 @@ export default async function ScanPage({
                   est. reading time saved
                 </p>
                 <p className="mt-2 font-mono text-2xl font-semibold text-ink-dim">
-                  — <span className="text-base text-ink-faint">min</span>
+                  -- <span className="text-base text-ink-faint">min</span>
                 </p>
                 <dl className="mt-5 space-y-3 border-t border-line/70 pt-4 font-mono text-xs">
                   {[
-                    ['paragraphs', '—'],
-                    ['flagged as slop', '—'],
-                    ['facts extracted', '—'],
+                    ['paragraphs', '--'],
+                    ['flagged as slop', '--'],
+                    ['facts extracted', '--'],
                   ].map(([label, value]) => (
                     <div
                       key={label}

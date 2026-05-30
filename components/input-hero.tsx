@@ -117,7 +117,7 @@ export function InputHero() {
         style={{ '--rise-delay': '200ms' } as React.CSSProperties}
       >
         Paste a URL or raw text. SlopShrink x-rays every paragraph for
-        information density — collapsing the filler and spotlighting the facts,
+        information density, collapsing the filler and spotlighting the facts,
         numbers, and steps worth keeping.
       </p>
 

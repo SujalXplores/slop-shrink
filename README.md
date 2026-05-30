@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SlopShrink
 
-## Getting Started
+X-ray any article or block of text for **information density**. SlopShrink scores
+every paragraph, collapses the filler ("slop"), and spotlights the verifiable
+facts, numbers, and steps worth keeping.
 
-First, run the development server:
+## How it works
+
+1. **Scan** — fetch a URL (parsed with Cheerio) or take raw text, then split it
+   into clean paragraphs.
+2. **Score** — a language model rates each paragraph's density 0–100, flags slop,
+   and extracts the hard facts.
+3. **Shrink** — X-Ray mode collapses the slop and spotlights the dense paragraphs.
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## LLM configuration
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+SlopShrink is provider-agnostic (OpenAI, Anthropic, Google, OpenRouter, Ollama).
+There are two ways to supply credentials:
 
-## Learn More
+- **Bring your own key (BYOK)** — enter a key in the in-app modal. It stays in the
+  browser tab (sessionStorage), is sent only to run your scan, and is never stored
+  server-side.
+- **Server environment** — set a shared key as a fallback (see `.env.example`):
 
-To learn more about Next.js, take a look at the following resources:
+  ```bash
+  LLM_PROVIDER=openai        # openai | anthropic | google | openrouter | ollama
+  LLM_MODEL=gpt-4o-mini      # optional; defaults per provider
+  OPENAI_API_KEY=sk-...
+  ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project layout
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Path | Responsibility |
+| --- | --- |
+| `app/` | App Router pages + API routes (`/api/analyze`, `/api/models`) |
+| `lib/analyze.ts` | Scan orchestration and derived metrics |
+| `lib/scrape.ts` | URL → clean paragraphs (with an SSRF guard) |
+| `lib/llm/` | Provider-agnostic model registry, schema, and analysis call |
+| `lib/storage.ts` | Scan persistence (swap the in-memory store for prod) |
+| `components/` | UI: input console, X-Ray viewer, BYOK modal, design-system primitives |
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev     # start the dev server
+npm run build   # production build
+npm run start   # serve the production build
+npm run lint    # ESLint
+```

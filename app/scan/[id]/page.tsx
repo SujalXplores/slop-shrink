@@ -1,16 +1,10 @@
-import Link from "next/link";
-import { SiteHeader } from "@/components/site-header";
-import { XRayToggle } from "@/components/xray-toggle";
-import { XRayArticle } from "@/components/xray-article";
-import { XRaySidebar } from "@/components/xray-sidebar";
-import { getScan } from "@/lib/storage";
+import Link from 'next/link';
+import { SiteHeader } from '@/components/site-header';
+import { XRayToggle } from '@/components/xray-toggle';
+import { XRayArticle } from '@/components/xray-article';
+import { XRaySidebar } from '@/components/xray-sidebar';
+import { getScan } from '@/lib/storage';
 
-/**
- * The X-Ray Viewer. In Next 16 `params` is a Promise and must be awaited.
- *
- * Loads the saved ScanResult by id and renders the full paragraph view with
- * density visualization, fact spotlights, and animated sidebar stats.
- */
 export default async function ScanPage({
   params,
 }: {
@@ -23,7 +17,6 @@ export default async function ScanPage({
     <div className="flex min-h-dvh flex-col">
       <SiteHeader />
 
-      {/* Scan sub-bar */}
       <div className="border-b border-line/70 bg-void/50 backdrop-blur-lg">
         <div className="mx-auto flex h-12 max-w-6xl items-center justify-between px-5">
           <Link
@@ -40,7 +33,6 @@ export default async function ScanPage({
       </div>
 
       <main className="mx-auto grid w-full max-w-6xl flex-1 gap-8 px-5 py-10 lg:grid-cols-12">
-        {/* Reading column */}
         <article className="lg:col-span-8">
           {scan ? (
             <div className="font-read text-ink">
@@ -74,19 +66,18 @@ export default async function ScanPage({
                 </Link>
               </div>
 
-              {/* Faint skeleton hinting the reading layout */}
               <div aria-hidden="true" className="space-y-3 opacity-40">
                 {[
-                  ["signal", "92%"],
-                  ["signal", "100%"],
-                  ["slop", "84%"],
-                  ["signal", "97%"],
-                  ["slop", "78%"],
+                  ['signal', '92%'],
+                  ['signal', '100%'],
+                  ['slop', '84%'],
+                  ['signal', '97%'],
+                  ['slop', '78%'],
                 ].map(([kind, w], i) => (
                   <div key={i} className="flex gap-3">
                     <span
                       className={`mt-1 h-full w-0.5 shrink-0 rounded-full ${
-                        kind === "signal" ? "bg-signal/60" : "bg-slop/60"
+                        kind === 'signal' ? 'bg-signal/60' : 'bg-slop/60'
                       }`}
                     />
                     <span
@@ -100,7 +91,6 @@ export default async function ScanPage({
           )}
         </article>
 
-        {/* Glassmorphism stat sidebar */}
         <aside className="lg:col-span-4">
           {scan ? (
             <XRaySidebar scan={scan} />
@@ -112,7 +102,10 @@ export default async function ScanPage({
                 </p>
                 <div className="mt-4 flex items-center justify-center">
                   <div className="relative grid h-36 w-36 place-items-center">
-                    <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
+                    <svg
+                      viewBox="0 0 120 120"
+                      className="h-full w-full -rotate-90"
+                    >
                       <circle
                         cx="60"
                         cy="60"
@@ -143,11 +136,14 @@ export default async function ScanPage({
                 </p>
                 <dl className="mt-5 space-y-3 border-t border-line/70 pt-4 font-mono text-xs">
                   {[
-                    ["paragraphs", "—"],
-                    ["flagged as slop", "—"],
-                    ["facts extracted", "—"],
+                    ['paragraphs', '—'],
+                    ['flagged as slop', '—'],
+                    ['facts extracted', '—'],
                   ].map(([label, value]) => (
-                    <div key={label} className="flex items-center justify-between">
+                    <div
+                      key={label}
+                      className="flex items-center justify-between"
+                    >
                       <dt className="uppercase tracking-[0.14em] text-ink-faint">
                         {label}
                       </dt>

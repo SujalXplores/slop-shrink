@@ -1,23 +1,16 @@
-"use client";
+'use client';
 
-import { AnimatePresence, motion } from "motion/react";
-import { useXRayStore } from "@/components/providers/xray-store-provider";
-import type { ScanResult } from "@/lib/types";
+import { AnimatePresence, motion } from 'motion/react';
+import { useXRayStore } from '@/components/providers/xray-store-provider';
+import { densityTier } from '@/lib/utils';
+import type { ScanResult } from '@/lib/types';
 
-/**
- * Density bar color based on score thresholds.
- */
-function densityColor(score: number): string {
-  if (score >= 70) return "bg-signal";
-  if (score >= 40) return "bg-warn";
-  return "bg-slop";
-}
-
-function densityColorFaint(score: number): string {
-  if (score >= 70) return "bg-signal/40";
-  if (score >= 40) return "bg-warn/40";
-  return "bg-slop/40";
-}
+const BAR_FILL = { high: 'bg-signal', mid: 'bg-warn', low: 'bg-slop' } as const;
+const BAR_TRACK = {
+  high: 'bg-signal/40',
+  mid: 'bg-warn/40',
+  low: 'bg-slop/40',
+} as const;
 
 interface XRayArticleProps {
   scan: ScanResult;
@@ -37,29 +30,28 @@ export function XRayArticle({ scan }: XRayArticleProps) {
         const isSlop = analysis.isSlop;
         const isCollapsed = xrayMode && isSlop && !revealed[i];
         const hasFacts = analysis.extractedFacts.length > 0;
+        const tier = densityTier(analysis.densityScore);
 
         return (
           <div key={i} className="relative">
-            {/* Left-rail density indicator */}
             <div className="absolute left-0 top-0 bottom-0 w-0.5">
               <div
-                className={`h-full rounded-full transition-colors duration-300 ${densityColorFaint(analysis.densityScore)}`}
+                className={`h-full rounded-full transition-colors duration-300 ${BAR_TRACK[tier]}`}
               />
               <div
-                className={`absolute top-0 left-0 w-full rounded-full transition-all duration-500 ${densityColor(analysis.densityScore)}`}
+                className={`absolute top-0 left-0 w-full rounded-full transition-all duration-500 ${BAR_FILL[tier]}`}
                 style={{
                   height: `${Math.max(analysis.densityScore, 8)}%`,
                 }}
               />
             </div>
 
-            {/* Paragraph content */}
             <div className="pl-4">
               <motion.div
                 layout
                 initial={false}
                 animate={{
-                  height: isCollapsed ? 0 : "auto",
+                  height: isCollapsed ? 0 : 'auto',
                   opacity: isCollapsed ? 0 : 1,
                 }}
                 transition={{
@@ -70,21 +62,18 @@ export function XRayArticle({ scan }: XRayArticleProps) {
               >
                 <p
                   className={`font-read text-[15px] leading-relaxed transition-colors duration-300 ${
-                    xrayMode && isSlop
-                      ? "text-ink-faint"
-                      : "text-ink"
+                    xrayMode && isSlop ? 'text-ink-faint' : 'text-ink'
                   }`}
                 >
                   {paragraph}
                 </p>
               </motion.div>
 
-              {/* Collapsed slop indicator — click to reveal */}
               <AnimatePresence>
                 {isCollapsed && (
                   <motion.button
                     initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
+                    animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.2 }}
                     type="button"
@@ -99,12 +88,11 @@ export function XRayArticle({ scan }: XRayArticleProps) {
                 )}
               </AnimatePresence>
 
-              {/* Fact spotlights */}
               <AnimatePresence>
                 {xrayMode && hasFacts && !isCollapsed && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
+                    animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.25, delay: 0.05 }}
                     className="mt-2 overflow-hidden"

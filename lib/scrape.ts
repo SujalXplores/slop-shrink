@@ -3,61 +3,50 @@ import "server-only";
 import * as cheerio from "cheerio";
 
 import { ScrapeError } from "./errors";
-
-/**
- * URL → clean article paragraphs.
- *
- * Fetches with a custom UA, a hard timeout, a manual redirect cap, and a byte
- * cap; rejects non-HTML and obvious internal hosts (basic SSRF guard); then
- * strips chrome (script/style/nav/aside/footer/ads) and lifts the title plus
- * the main content split into clean paragraphs.
- */
+import { countWords, MIN_TOTAL_WORDS } from "./utils";
 
 const USER_AGENT =
   "SlopShrinkBot/0.2 (+https://slopshrink.app; information-density scanner)";
 const FETCH_TIMEOUT_MS = 10_000;
 const MAX_REDIRECTS = 5;
-const MAX_BYTES = 2_000_000; // 2 MB of HTML is plenty for an article.
+const MAX_BYTES = 2_000_000;
 const MIN_PARAGRAPH_WORDS = 4;
-const MIN_TOTAL_WORDS = 50;
 
 export interface ScrapedArticle {
-  /** Resolved <title> (or first <h1>), if any. */
   title?: string;
-  /** Final URL after following redirects. */
   url: string;
-  /** Cleaned, ordered paragraphs. */
   paragraphs: string[];
 }
 
-function countWords(value: string): number {
-  const trimmed = value.trim();
-  return trimmed ? trimmed.split(/\s+/).length : 0;
-}
-
-/** Collapse whitespace and drop common citation/edit markers. */
 function normalize(text: string): string {
   return text
-    .replace(/\[\d+\]/g, "") // [12] reference markers
+    .replace(/\[\d+\]/g, "")
     .replace(/\[edit\]/gi, "")
     .replace(/\s+/g, " ")
     .trim();
 }
 
-/** Reject loopback / private / link-local hosts to limit SSRF surface. */
 function assertPublicHost(hostname: string): void {
-  const host = hostname.toLowerCase();
+  let host = hostname.toLowerCase();
+  if (host.startsWith("[") && host.endsWith("]")) {
+    host = host.slice(1, -1);
+  }
+  const mapped = host.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/);
+  if (mapped) host = mapped[1];
+
   const blocked =
     host === "localhost" ||
     host.endsWith(".localhost") ||
     host === "0.0.0.0" ||
+    host === "::" ||
     host === "::1" ||
-    host === "[::1]" ||
     /^127\./.test(host) ||
     /^10\./.test(host) ||
     /^192\.168\./.test(host) ||
     /^169\.254\./.test(host) ||
-    /^172\.(1[6-9]|2\d|3[01])\./.test(host);
+    /^172\.(1[6-9]|2\d|3[01])\./.test(host) ||
+    /^f[cd][0-9a-f]{2}:/.test(host) ||
+    /^fe[89ab][0-9a-f]:/.test(host);
   if (blocked) {
     throw new ScrapeError(
       "fetch_failed",
@@ -67,14 +56,13 @@ function assertPublicHost(hostname: string): void {
   }
 }
 
-/** Read a response body up to `maxBytes`, truncating rather than buffering it all. */
 async function readCapped(res: Response, maxBytes: number): Promise<string> {
   const reader = res.body?.getReader();
   if (!reader) return (await res.text()).slice(0, maxBytes);
 
   const chunks: Uint8Array[] = [];
   let total = 0;
-  for (;;) {
+  for (; ;) {
     const { done, value } = await reader.read();
     if (done) break;
     if (!value) continue;
@@ -96,14 +84,7 @@ async function readCapped(res: Response, maxBytes: number): Promise<string> {
   return new TextDecoder("utf-8").decode(merged);
 }
 
-/** Fetch HTML, following up to MAX_REDIRECTS redirects manually. */
-async function fetchHtml(rawUrl: string): Promise<{ url: string; html: string }> {
-  let target: URL;
-  try {
-    target = new URL(rawUrl);
-  } catch {
-    throw new ScrapeError("fetch_failed", "That is not a valid URL.", 422);
-  }
+function assertHttpProtocol(target: URL): void {
   if (target.protocol !== "http:" && target.protocol !== "https:") {
     throw new ScrapeError(
       "fetch_failed",
@@ -111,8 +92,18 @@ async function fetchHtml(rawUrl: string): Promise<{ url: string; html: string }>
       422,
     );
   }
+}
+
+async function fetchHtml(rawUrl: string): Promise<{ url: string; html: string }> {
+  let target: URL;
+  try {
+    target = new URL(rawUrl);
+  } catch {
+    throw new ScrapeError("fetch_failed", "That is not a valid URL.", 422);
+  }
 
   for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+    assertHttpProtocol(target);
     assertPublicHost(target.hostname);
 
     const controller = new AbortController();
@@ -142,7 +133,6 @@ async function fetchHtml(rawUrl: string): Promise<{ url: string; html: string }>
       clearTimeout(timer);
     }
 
-    // Manual redirect handling so we can enforce the hop cap.
     if (res.status >= 300 && res.status < 400) {
       const location = res.headers.get("location");
       if (!location) {
@@ -214,7 +204,6 @@ const STRIP_SELECTOR = [
 
 const CONTENT_SELECTOR = "p, li, blockquote";
 
-/** Strip chrome and extract the title + clean paragraphs from HTML. */
 function extract(html: string): { title?: string; paragraphs: string[] } {
   const $ = cheerio.load(html);
 
@@ -223,7 +212,6 @@ function extract(html: string): { title?: string; paragraphs: string[] } {
   const rawTitle = ($("title").first().text() || $("h1").first().text()).trim();
   const title = normalize(rawTitle) || undefined;
 
-  // Prefer a semantic content container; fall back to the whole body.
   const article = $("article").first();
   const main = $("main").first();
   const root =
@@ -234,7 +222,7 @@ function extract(html: string): { title?: string; paragraphs: string[] } {
   root.find(CONTENT_SELECTOR).each((_, el) => {
     const text = normalize($(el).text());
     if (countWords(text) < MIN_PARAGRAPH_WORDS) return;
-    if (seen.has(text)) return; // drop exact duplicates (repeated boilerplate)
+    if (seen.has(text)) return;
     seen.add(text);
     paragraphs.push(text);
   });
@@ -242,12 +230,6 @@ function extract(html: string): { title?: string; paragraphs: string[] } {
   return { title, paragraphs };
 }
 
-/**
- * Fetch and parse a URL into a clean article.
- *
- * @throws {ScrapeError} on a bad/blocked URL, network/timeout failure, non-HTML
- *   response, or content too short to analyze.
- */
 export async function scrapeUrl(rawUrl: string): Promise<ScrapedArticle> {
   const { url, html } = await fetchHtml(rawUrl);
   const { title, paragraphs } = extract(html);

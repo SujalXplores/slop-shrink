@@ -1,10 +1,9 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useByokStore } from "@/components/providers/byok-store-provider";
-import { KeyModal, openKeyModal } from "@/components/key-modal";
+import Link from 'next/link';
+import { useByokStore } from '@/components/providers/byok-store-provider';
+import { KeyModal, openKeyModal } from '@/components/key-modal';
 
-/** Top chrome bar — the instrument's nameplate + a live status readout. */
 export function SiteHeader() {
   const hasKey = useByokStore((s) => !!s.apiKey || !!s.baseURL);
 
@@ -35,11 +34,11 @@ export function SiteHeader() {
             >
               <span
                 className={`h-1.5 w-1.5 rounded-full ${
-                  hasKey ? "bg-signal" : "bg-slop"
+                  hasKey ? 'bg-signal' : 'bg-slop'
                 }`}
               />
-              <span className={hasKey ? "text-signal-dim" : "text-slop-dim"}>
-                {hasKey ? "key set" : "no key"}
+              <span className={hasKey ? 'text-signal-dim' : 'text-slop-dim'}>
+                {hasKey ? 'key set' : 'no key'}
               </span>
             </button>
             <span className="hidden h-3 w-px bg-line sm:inline" />

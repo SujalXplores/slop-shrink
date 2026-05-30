@@ -1,21 +1,21 @@
-import { SiteHeader } from "@/components/site-header";
-import { InputHero } from "@/components/input-hero";
+import { SiteHeader } from '@/components/site-header';
+import { InputHero } from '@/components/input-hero';
 
 const STEPS = [
   {
-    n: "01",
-    title: "Scan",
-    body: "Fetch the URL and parse it with Cheerio (or take your raw text), then split it into clean paragraphs.",
+    n: '01',
+    title: 'Scan',
+    body: 'Fetch the URL and parse it with Cheerio (or take your raw text), then split it into clean paragraphs.',
   },
   {
-    n: "02",
-    title: "Score",
+    n: '02',
+    title: 'Score',
     body: "gpt-4o-mini rates each paragraph's information density and extracts the hard facts, numbers, and steps.",
   },
   {
-    n: "03",
-    title: "Shrink",
-    body: "Flip X-Ray mode to collapse the slop to nothing and spotlight only the paragraphs that earn their space.",
+    n: '03',
+    title: 'Shrink',
+    body: 'Flip X-Ray mode to collapse the slop to nothing and spotlight only the paragraphs that earn their space.',
   },
 ];
 
@@ -29,7 +29,6 @@ export default function Home() {
           <InputHero />
         </div>
 
-        {/* How it works */}
         <section
           aria-label="How it works"
           className="grid gap-4 border-t border-line/70 py-12 sm:grid-cols-3"
@@ -39,7 +38,7 @@ export default function Home() {
               key={step.n}
               className="animate-rise panel rounded-xl p-5"
               style={
-                { "--rise-delay": `${440 + i * 90}ms` } as React.CSSProperties
+                { '--rise-delay': `${440 + i * 90}ms` } as React.CSSProperties
               }
             >
               <div className="flex items-baseline gap-3">

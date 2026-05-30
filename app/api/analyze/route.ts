@@ -4,18 +4,9 @@ import { analyze, type AnalyzeInput } from "@/lib/analyze";
 import { saveScan } from "@/lib/storage";
 import { AppError } from "@/lib/errors";
 import { isProviderId } from "@/lib/providers";
+import { readByokHeaders } from "@/lib/byok";
 import type { ModelOverrides } from "@/lib/llm/registry";
 
-/**
- * POST /api/analyze
- *
- * Body: `{ url: string }` OR `{ text: string }`.
- * Runs a scan, persists it, and returns `{ id }` (201). Failures are mapped to
- * typed JSON errors with the right status code.
- *
- * `nodejs` runtime: the scraper (Cheerio + streamed fetch) and the provider
- * SDKs rely on Node APIs.
- */
 export const runtime = "nodejs";
 
 const bodySchema = z.union([
@@ -57,7 +48,6 @@ export async function POST(request: Request): Promise<Response> {
         { status: err.status },
       );
     }
-    // Unexpected: log server-side, return a generic message (no internals leak).
     console.error("[/api/analyze] unexpected error:", err);
     return Response.json(
       { error: "internal_error", message: "Something went wrong while analyzing." },
@@ -66,25 +56,20 @@ export async function POST(request: Request): Promise<Response> {
   }
 }
 
-/**
- * Extract optional per-request BYOK overrides from request headers.
- * The key is NEVER logged or persisted server-side.
- */
 function extractOverrides(request: Request): ModelOverrides | undefined {
-  const provider = request.headers.get("x-llm-provider")?.trim() || undefined;
-  const model = request.headers.get("x-llm-model")?.trim() || undefined;
-  const apiKey = request.headers.get("x-llm-key")?.trim() || undefined;
-  const baseURL = request.headers.get("x-llm-base-url")?.trim() || undefined;
+  const creds = readByokHeaders(request.headers);
 
-  if (!provider && !model && !apiKey && !baseURL) return undefined;
+  if (!creds.provider && !creds.model && !creds.apiKey && !creds.baseURL) {
+    return undefined;
+  }
 
-  if (provider && !isProviderId(provider)) {
+  if (creds.provider && !isProviderId(creds.provider)) {
     throw new AppError(
       "unknown_provider",
-      `Unknown provider "${provider}".`,
+      `Unknown provider "${creds.provider}".`,
       400,
     );
   }
 
-  return { provider, model, apiKey, baseURL };
+  return creds;
 }

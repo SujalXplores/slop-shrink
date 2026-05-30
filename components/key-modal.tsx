@@ -1,8 +1,9 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useState } from "react";
-import { useByokStore } from "@/components/providers/byok-store-provider";
-import { PROVIDER_LIST, PROVIDERS, type ProviderId } from "@/lib/providers";
+import { useCallback, useEffect, useState } from 'react';
+import { useByokStore } from '@/components/providers/byok-store-provider';
+import { PROVIDER_LIST, PROVIDERS, type ProviderId } from '@/lib/providers';
+import { byokHeaders } from '@/lib/byok';
 import {
   Dialog,
   DialogContent,
@@ -10,17 +11,17 @@ import {
   DialogTitle,
   DialogDescription,
   DialogClose,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import {
   Autocomplete,
   AutocompleteInput,
@@ -28,21 +29,15 @@ import {
   AutocompleteList,
   AutocompleteItem,
   AutocompleteEmpty,
-} from "@/components/ui/autocomplete";
+} from '@/components/ui/autocomplete';
 
-/**
- * BYOK key modal — accessible dialog for entering a per-request API key.
- * Opens from the header button OR auto-opens via a `byok:open` CustomEvent
- * (dispatched when a scan is attempted with no key available).
- */
-
-type ModelsStatus = "idle" | "loading" | "loaded" | "error";
+type ModelsStatus = 'idle' | 'loading' | 'loaded' | 'error';
 
 export function KeyModal() {
   const [open, setOpen] = useState(false);
   const [showKey, setShowKey] = useState(false);
   const [models, setModels] = useState<string[]>([]);
-  const [modelsStatus, setModelsStatus] = useState<ModelsStatus>("idle");
+  const [modelsStatus, setModelsStatus] = useState<ModelsStatus>('idle');
   const [modelsError, setModelsError] = useState<string | null>(null);
 
   const provider = useByokStore((s) => s.provider);
@@ -61,57 +56,50 @@ export function KeyModal() {
     clearCredentials();
     setShowKey(false);
     setModels([]);
-    setModelsStatus("idle");
+    setModelsStatus('idle');
     setModelsError(null);
   }, [clearCredentials]);
 
   useEffect(() => {
     const onOpen = () => setOpen(true);
-    document.addEventListener("byok:open", onOpen);
-    return () => document.removeEventListener("byok:open", onOpen);
+    document.addEventListener('byok:open', onOpen);
+    return () => document.removeEventListener('byok:open', onOpen);
   }, []);
 
-  // Fetch the provider's model list so the user picks (not types) a model id.
-  // Runs only while the modal is open; debounced so typing a key doesn't spam
-  // the endpoint, and abortable so a stale request can't overwrite a newer one.
   const needsKey = meta.usesApiKey;
   useEffect(() => {
     if (!open) return;
     const key = apiKey.trim();
     const controller = new AbortController();
     const timer = setTimeout(async () => {
-      // No usable credential yet → reset to the idle hint, don't call out.
       if (needsKey && !key) {
         setModels([]);
-        setModelsStatus("idle");
+        setModelsStatus('idle');
         setModelsError(null);
         return;
       }
-      setModelsStatus("loading");
+      setModelsStatus('loading');
       setModelsError(null);
       try {
-        const headers: Record<string, string> = { "x-llm-provider": provider };
-        if (key) headers["x-llm-key"] = key;
-        if (baseURL.trim()) headers["x-llm-base-url"] = baseURL.trim();
-
-        const res = await fetch("/api/models", {
-          headers,
+        const res = await fetch('/api/models', {
+          headers: byokHeaders({ provider, apiKey: key, baseURL }),
           signal: controller.signal,
         });
-        const data = (await res.json().catch(() => null)) as
-          | { models?: string[]; message?: string }
-          | null;
+        const data = (await res.json().catch(() => null)) as {
+          models?: string[];
+          message?: string;
+        } | null;
         if (!res.ok) {
-          throw new Error(data?.message ?? "Could not load models.");
+          throw new Error(data?.message ?? 'Could not load models.');
         }
         setModels(Array.isArray(data?.models) ? data.models : []);
-        setModelsStatus("loaded");
+        setModelsStatus('loaded');
       } catch (err) {
         if (controller.signal.aborted) return;
         setModels([]);
-        setModelsStatus("error");
+        setModelsStatus('error');
         setModelsError(
-          err instanceof Error ? err.message : "Could not load models.",
+          err instanceof Error ? err.message : 'Could not load models.',
         );
       }
     }, 500);
@@ -128,7 +116,6 @@ export function KeyModal() {
         showCloseButton={false}
         className="border-line bg-panel p-0 shadow-2xl sm:max-w-md"
       >
-        {/* Header */}
         <div className="flex items-center justify-between border-b border-line px-6 py-4">
           <DialogHeader className="gap-0.5">
             <DialogTitle className="font-mono text-sm font-semibold uppercase tracking-[0.18em] text-ink">
@@ -161,10 +148,8 @@ export function KeyModal() {
           </DialogClose>
         </div>
 
-        {/* Body */}
         <div className="px-6 py-5">
           <FieldGroup>
-            {/* Security notice */}
             <div className="flex items-start gap-3 rounded-lg border border-signal/20 bg-signal/5 px-3.5 py-3">
               <svg
                 width="14"
@@ -194,7 +179,6 @@ export function KeyModal() {
               </p>
             </div>
 
-            {/* Provider select */}
             <Field>
               <FieldLabel className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
                 Provider
@@ -203,9 +187,7 @@ export function KeyModal() {
                 value={provider}
                 onValueChange={(v) => {
                   setProvider(v as ProviderId);
-                  // A model id is provider-specific — drop it so the new
-                  // provider's default (and freshly fetched list) applies.
-                  setModel("");
+                  setModel('');
                 }}
               >
                 <SelectTrigger className="h-9 w-full border-line bg-panel-2 pl-3 text-left font-mono text-sm text-ink">
@@ -225,10 +207,9 @@ export function KeyModal() {
               </Select>
             </Field>
 
-            {/* Model — fetched picklist (still accepts a typed custom id) */}
             <Field>
               <FieldLabel className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
-                Model{" "}
+                Model{' '}
                 <span className="text-ink-faint/50">
                   (blank = provider default)
                 </span>
@@ -261,18 +242,17 @@ export function KeyModal() {
                   </AutocompleteEmpty>
                 </AutocompleteContent>
               </Autocomplete>
-              {/* Live model-discovery status */}
               <p
                 className="mt-1.5 font-mono text-[10px] tracking-[0.04em] text-ink-faint"
                 role="status"
                 aria-live="polite"
               >
-                {modelsStatus === "loading" && (
+                {modelsStatus === 'loading' && (
                   <span className="text-signal-dim">
                     <span className="caret-blink">▰</span> loading models…
                   </span>
                 )}
-                {modelsStatus === "loaded" &&
+                {modelsStatus === 'loaded' &&
                   (models.length > 0 ? (
                     <span className="text-signal-dim">
                       {models.length} compatible models — pick or type one
@@ -280,12 +260,12 @@ export function KeyModal() {
                   ) : (
                     <span>no compatible models returned — type a model id</span>
                   ))}
-                {modelsStatus === "error" && (
+                {modelsStatus === 'error' && (
                   <span className="text-slop-dim">
                     ✕ {modelsError} — you can still type a model id
                   </span>
                 )}
-                {modelsStatus === "idle" &&
+                {modelsStatus === 'idle' &&
                   (needsKey ? (
                     <span>enter your API key above to load models</span>
                   ) : (
@@ -294,7 +274,6 @@ export function KeyModal() {
               </p>
             </Field>
 
-            {/* API Key or Base URL */}
             {meta.usesApiKey ? (
               <Field>
                 <div className="flex items-center justify-between">
@@ -314,7 +293,7 @@ export function KeyModal() {
                 </div>
                 <div className="relative">
                   <Input
-                    type={showKey ? "text" : "password"}
+                    type={showKey ? 'text' : 'password'}
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
                     placeholder={meta.keyPlaceholder}
@@ -327,7 +306,7 @@ export function KeyModal() {
                     onClick={() => setShowKey(!showKey)}
                     className="absolute right-1 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-faint transition-colors hover:bg-panel hover:text-ink-dim"
                   >
-                    {showKey ? "hide" : "show"}
+                    {showKey ? 'hide' : 'show'}
                   </button>
                 </div>
               </Field>
@@ -348,7 +327,6 @@ export function KeyModal() {
           </FieldGroup>
         </div>
 
-        {/* Footer */}
         <div className="flex items-center justify-between border-t border-line px-6 py-4">
           <Button
             type="button"
@@ -371,10 +349,6 @@ export function KeyModal() {
   );
 }
 
-/**
- * Trigger the key modal to open (from header button or auto-open on keyless scan).
- * Dispatches a DOM CustomEvent that the KeyModal component listens for.
- */
 export function openKeyModal() {
-  document.dispatchEvent(new Event("byok:open"));
+  document.dispatchEvent(new Event('byok:open'));
 }

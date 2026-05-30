@@ -1,21 +1,16 @@
-"use client";
+'use client';
 
-import { motion } from "motion/react";
-import type { ScanResult } from "@/lib/types";
+import { motion } from 'motion/react';
+import { densityTier } from '@/lib/utils';
+import type { ScanResult } from '@/lib/types';
 
 const CIRCUMFERENCE = 2 * Math.PI * 52;
 
-function densityStrokeColor(score: number): string {
-  if (score >= 70) return "var(--color-signal)";
-  if (score >= 40) return "var(--color-warn)";
-  return "var(--color-slop)";
-}
-
-function densityLabel(score: number): string {
-  if (score >= 70) return "high";
-  if (score >= 40) return "mid";
-  return "low";
-}
+const TIER_STROKE = {
+  high: 'var(--color-signal)',
+  mid: 'var(--color-warn)',
+  low: 'var(--color-slop)',
+} as const;
 
 interface XRaySidebarProps {
   scan: ScanResult;
@@ -28,12 +23,12 @@ export function XRaySidebar({ scan }: XRaySidebarProps) {
     0,
   );
 
+  const tier = densityTier(scan.overallDensity);
+  const strokeColor = TIER_STROKE[tier];
   const offset = CIRCUMFERENCE * (1 - scan.overallDensity / 100);
-  const strokeColor = densityStrokeColor(scan.overallDensity);
 
   return (
     <div className="sticky top-20 space-y-4">
-      {/* Density ring */}
       <div className="glass rounded-2xl p-6">
         <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink-faint">
           information density
@@ -74,20 +69,19 @@ export function XRaySidebar({ scan }: XRaySidebarProps) {
                 {scan.overallDensity}
               </motion.span>
               <span className="block font-mono text-[9px] uppercase tracking-[0.2em] text-ink-faint">
-                {densityLabel(scan.overallDensity)}
+                {tier}
               </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Stats */}
       <div className="glass rounded-2xl p-6">
         <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink-faint">
           est. reading time saved
         </p>
         <p className="mt-2 font-mono text-2xl font-semibold text-ink-dim">
-          {scan.readingTimeSavedMin}{" "}
+          {scan.readingTimeSavedMin}{' '}
           <span className="text-base text-ink-faint">min</span>
         </p>
         <dl className="mt-5 space-y-3 border-t border-line/70 pt-4 font-mono text-xs">

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useByokStore } from '@/components/providers/byok-store-provider';
 import { PROVIDERS } from '@/lib/providers';
 import { openKeyModal } from '@/components/key-modal';
+import { countWords, MIN_TOTAL_WORDS } from '@/lib/utils';
+import { byokHeaders } from '@/lib/byok';
 
 type Mode = 'url' | 'text';
 
@@ -19,11 +21,6 @@ function isValidHttpUrl(value: string): boolean {
   } catch {
     return false;
   }
-}
-
-function countWords(value: string): number {
-  const trimmed = value.trim();
-  return trimmed ? trimmed.split(/\s+/).length : 0;
 }
 
 export function InputHero() {
@@ -41,9 +38,9 @@ export function InputHero() {
 
   const words = useMemo(() => countWords(text), [text]);
   const urlOk = useMemo(() => isValidHttpUrl(url), [url]);
-  const canSubmit = mode === 'url' ? urlOk : words >= 25;
+  const canSubmit = mode === 'url' ? urlOk : words >= MIN_TOTAL_WORDS;
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!canSubmit || loading) return;
 
@@ -57,17 +54,18 @@ export function InputHero() {
     setLoading(true);
     try {
       const body = mode === 'url' ? { url: url.trim() } : { text };
-      const headers: Record<string, string> = {
-        'content-type': 'application/json',
-      };
-      if (byokProvider) headers['x-llm-provider'] = byokProvider;
-      if (byokModel) headers['x-llm-model'] = byokModel;
-      if (byokApiKey) headers['x-llm-key'] = byokApiKey;
-      if (byokBaseURL) headers['x-llm-base-url'] = byokBaseURL;
 
       const res = await fetch('/api/analyze', {
         method: 'POST',
-        headers,
+        headers: {
+          'content-type': 'application/json',
+          ...byokHeaders({
+            provider: byokProvider,
+            model: byokModel,
+            apiKey: byokApiKey,
+            baseURL: byokBaseURL,
+          }),
+        },
         body: JSON.stringify(body),
       });
       const data = (await res.json().catch(() => null)) as {
@@ -77,8 +75,6 @@ export function InputHero() {
       if (!res.ok || !data?.id) {
         throw new Error(data?.message ?? 'Analysis failed. Please try again.');
       }
-      // Navigate to the X-Ray viewer; keep `loading` true through the push so
-      // the console doesn't flash back to idle mid-navigation.
       router.push(`/scan/${data.id}`);
     } catch (err) {
       setError(
@@ -125,14 +121,12 @@ export function InputHero() {
         numbers, and steps worth keeping.
       </p>
 
-      {/* ---- Scanner console ---- */}
       <form
         onSubmit={handleSubmit}
         className="animate-rise scan-sweep glass mt-10 rounded-2xl p-2.5"
         style={{ '--rise-delay': '300ms' } as React.CSSProperties}
       >
         <div className="relative z-10 rounded-xl bg-void/40 p-4 sm:p-5">
-          {/* Mode toggle + readout */}
           <div className="mb-4 flex items-center justify-between gap-4">
             <div
               role="tablist"
@@ -165,11 +159,12 @@ export function InputHero() {
                 ? urlOk
                   ? 'target locked'
                   : 'awaiting url'
-                : `${words} words`}
+                : words >= MIN_TOTAL_WORDS
+                  ? `${words} words`
+                  : `${words} / ${MIN_TOTAL_WORDS} words`}
             </span>
           </div>
 
-          {/* Input surface */}
           {mode === 'url' ? (
             <input
               type="url"
@@ -199,7 +194,6 @@ export function InputHero() {
             />
           )}
 
-          {/* Action row */}
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-line/70 pt-4">
             <div className="flex items-center gap-2">
               <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
@@ -250,7 +244,6 @@ export function InputHero() {
         </div>
       </form>
 
-      {/* Live status: real loading + typed error states from /api/analyze */}
       {loading && (
         <p className="mt-4 font-mono text-xs text-ink-faint" role="status">
           <span className="text-signal">▰▰▰</span>

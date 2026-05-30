@@ -2,19 +2,10 @@ import { createStore } from "zustand/vanilla";
 import { persist } from "zustand/middleware";
 import type { ProviderId } from "./providers";
 
-/**
- * Client-side BYOK (Bring-Your-Own-Key) credentials.
- * Persisted to sessionStorage so keys survive page navigations within a tab
- * but are wiped when the tab closes. NEVER logged or persisted server-side.
- */
-
 export interface ByokState {
   provider: ProviderId;
-  /** Empty string = use the server-side default for the chosen provider. */
   model: string;
-  /** API key — empty for Ollama (which uses baseURL instead). */
   apiKey: string;
-  /** Base URL override — only relevant for Ollama. */
   baseURL: string;
 }
 
@@ -46,8 +37,7 @@ export const createByokStore = (init: ByokState = defaultByokState) =>
         setApiKey: (k) => set({ apiKey: k }),
         setBaseURL: (u) => set({ baseURL: u }),
         setCredentials: (c) => set(c),
-        clearCredentials: () =>
-          set({ model: "", apiKey: "", baseURL: "" }),
+        clearCredentials: () => set({ model: "", apiKey: "", baseURL: "" }),
       }),
       {
         name: "slopshrink-byok",

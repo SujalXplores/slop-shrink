@@ -1,71 +1,424 @@
-# SlopShrink
+<div align="center">
 
-X-ray any article or block of text for **information density**. SlopShrink scores
-every paragraph, collapses the filler ("slop"), and spotlights the verifiable
-facts, numbers, and steps worth keeping.
-
-## How it works
-
-1. **Scan**: fetch a URL (parsed with Cheerio) or take raw text, then split it
-   into clean paragraphs.
-2. **Score**: a language model rates each paragraph's density 0-100, flags slop,
-   and extracts the hard facts.
-3. **Shrink**: X-Ray mode collapses the slop and spotlights the dense paragraphs.
-
-## Getting started
-
-```bash
-npm install
-npm run dev
+```
+                        ╔═══════════════════════════════════════╗
+                        ║                                       ║
+                        ║     ┌───────────────────────────┐     ║
+                        ║     │  ◉                        │     ║
+                        ║     │     ╱╲     S L O P        │     ║
+                        ║     │    ╱  ╲    S H R I N K    │     ║
+                        ║     │   ╱ ◉  ╲                  │     ║
+                        ║     │  ╱──────╲                 │     ║
+                        ║     │  ╲  ◉   ╱  v0.1.0         │     ║
+                        ║     │   ╲    ╱                  │     ║
+                        ║     │    ╲  ╱  information-     │     ║
+                        ║     │     ╲╱   density scanner  │     ║
+                        ║     │     ◉                     │     ║
+                        ║     └───────────────────────────┘     ║
+                        ║                                       ║
+                        ╚═══════════════════════════════════════╝
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+# **SLOPSHRINK**
 
-## LLM configuration
+### `// information-density scanner`
 
-SlopShrink is provider-agnostic (OpenAI, Anthropic, Google, OpenRouter, Ollama).
-Enter your API key in the in-app modal (BYOK). It stays in the browser tab
-(sessionStorage), is sent only to run your scan, and is never stored server-side.
+**X-ray any article. Collapse the filler. Spotlight the facts.**
 
-## Project layout
+`Read less. Learn more.`
 
-| Path | Responsibility |
-| --- | --- |
-| `app/` | App Router pages, API routes, SEO metadata, icons |
-| `app/api/analyze/` | POST endpoint: accepts `{ url }` or `{ text }`, runs analysis |
-| `app/api/models/` | GET endpoint: lists available models for a provider |
-| `app/icon.tsx` | Dynamic favicon (X-ray symbol) |
-| `app/robots.ts` | Crawler rules |
-| `app/sitemap.ts` | Sitemap generation |
-| `lib/analyze.ts` | Scan orchestration and derived metrics |
-| `lib/scrape.ts` | URL to clean paragraphs (with an SSRF guard) |
-| `lib/llm/` | Provider-agnostic model registry, schema, and analysis call |
-| `lib/storage.ts` | Scan persistence (swap the in-memory store for prod) |
-| `lib/types.ts` | `ParagraphAnalysis`, `ScanResult` types |
-| `lib/errors.ts` | `AppError`, `ScrapeError`, `LlmError` classes |
-| `lib/providers.ts` | Provider ID validation |
-| `lib/byok.ts` | BYOK header parsing |
-| `lib/byok-store.ts` | BYOK zustand store |
-| `lib/xray-store.ts` | X-Ray view zustand store |
-| `lib/utils.ts` | `countWords`, `MIN_TOTAL_WORDS`, etc. |
-| `components/` | UI: input console, X-Ray viewer, BYOK modal |
-| `components/ui/` | Design-system primitives (dialog, button, input, select, etc.) |
-| `components/providers/` | Zustand store providers for client components |
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-## Tech stack
+<br/>
 
-- **Next.js 16** (App Router)
-- **React 19** with React Compiler
-- **Tailwind CSS v4**
-- **Vercel AI SDK v6**
-- **Zustand** for client state
-- **Zod v4** for schema validation
+---
 
-## Scripts
+</div>
+
+## `// how it works`
+
+SlopShrink runs every paragraph through a 3-stage diagnostic pipeline:
+
+```
+ ┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐
+ │                 │       │                 │       │                 │
+ │   ◉  S C A N   │──────▶│   ◉  S C O R E │──────▶│  ◉  S H R I N K │
+ │                 │       │                 │       │                 │
+ │  Fetch URL via  │       │  LLM rates each │       │  X-Ray mode     │
+ │  Cheerio or     │       │  paragraph 0–100 │       │  collapses slop │
+ │  accept raw txt │       │  flags filler,   │       │  spotlights     │
+ │                 │       │  extracts facts  │       │  high-density   │
+ │                 │       │                 │       │                 │
+ └─────────────────┘       └─────────────────┘       └─────────────────┘
+        │                         │                         │
+        ▼                         ▼                         ▼
+   Clean text              Density scores            Interactive view
+   split into              + extracted               with fact callouts
+   paragraphs              facts & slop              & collapsible filler
+                           classification
+```
+
+---
+
+## `// live density readout`
+
+Here's what a scan result looks like — every paragraph scored, classified, and annotated:
+
+```
+  ┌─ DENSITY SCAN ───────────────────────────────────────────────────────-─┐
+  │                                                                        │
+  │  PARA 01  ██████████████████████████████████████████████░░  94  ◉ FACT │
+  │           "DeepMind's Gemini 2.0 Flash processes 1M tokens..."         │
+  │                                                                        │
+  │  PARA 02  █████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  12  ▓ SLOP   │
+  │           "In today's rapidly evolving landscape of AI..."             │
+  │                                                                        │
+  │  PARA 03  ██████████████████████████████████████████████░░  91  ◉ FACT │
+  │           "Pricing drops to $0.10/1M input tokens, 87% cheaper..."     │
+  │                                                                        │
+  │  PARA 04  ████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  09  ▓ SLOP   │
+  │           "It's worth noting that this development is particularly..." │
+  │                                                                        │
+  │  PARA 05  ███████████████████████████████████████████░░░░░  88  ◉ FACT │
+  │           "Context window expanded from 128K to 1M tokens..."          │
+  │                                                                        │
+  │  ════════════════════════════════════════════════════════════════════  │
+  │                                                                        │
+  │  OVERALL DENSITY   ██████████████████████░░░░░░░░░░  62/100            │
+  │  SLOP PARAGRAPHS   2 / 5  (40%)                                        │
+  │  FACTS EXTRACTED   4                                                   │
+  │  READING TIME SAVED  ~1.2 min                                          │
+  │                                                                        │
+  └──────────────────────────────────────────────────────────────────────-─┘
+```
+
+---
+
+## `// scan diagnostics` — Key Metrics
+
+```
+  ╔══════════════════════════╦═══════════════════╦══════════════════════════╗
+  ║       METRIC             ║     VALUE         ║       NOTES              ║
+  ╠══════════════════════════╬═══════════════════╬══════════════════════════╣
+  ║  Density Scale           ║  0 – 100          ║  Per-paragraph scoring   ║
+  ║  Max Paragraphs          ║  80               ║  Hard cap per scan       ║
+  ║  Min Input Words         ║  50               ║  Threshold enforced      ║
+  ║  LLM Providers           ║  5                ║  OpenAI/Anthropic/Google ║
+  ║                          ║                   ║  OpenRouter/Ollama       ║
+  ║  Reading Speed           ║  230 wpm          ║  For time-saved calc     ║
+  ║  Max Output Tokens       ║  8,192            ║  LLM structured output   ║
+  ║  LLM Retries             ║  2                ║  Auto-retry on failure   ║
+  ║  Fetch Timeout           ║  10 seconds       ║  Per URL request         ║
+  ║  Max Page Size           ║  2 MB             ║  Content-length guard    ║
+  ║  Max Redirects           ║  5                ║  Following chain         ║
+  ║  Context Floor           ║  16,384 tokens    ║  Min for model compat    ║
+  ║  Density Weighting       ║  Word-weighted    ║  Not a simple average    ║
+  ╚══════════════════════════╩═══════════════════╩══════════════════════════╝
+```
+
+---
+
+## `// diagnostic capabilities`
+
+```
+  ┌──────────────────────────┐  ┌──────────────────────────-┐
+  │  ◉  URL SCANNING         │  │  ◉  RAW TEXT INPUT        │
+  │                          │  │                           │
+  │  Paste any URL. Cheerio  │  │  Drop in any block of     │
+  │  strips nav, ads, cookie │  │  text — articles, docs,   │
+  │  banners, scripts, and   │  │  newsletters, transcripts │
+  │  extracts clean <p>,     │  │  — and get it scored.     │
+  │  <li>, <blockquote>.     │  │                           │
+  └──────────────────────────┘  └──────────────────────────-┘
+
+  ┌──────────────────────────┐  ┌──────────────────────────-┐
+  │  ◉  X-RAY MODE           │  │  ◉  DENSITY SCORING       │
+  │                          │  │                           │
+  │  Toggle on: slop         │  │  Every paragraph gets a   │
+  │  paragraphs collapse to  │  │  0–100 score. Color-coded │
+  │  a single line. Click to │  │  bar on the left edge:    │
+  │  reveal. Dense paragraphs│  │  GREEN = signal           │
+  │  spotlight extracted     │  │  AMBER = mid-density      │
+  │  facts in callout boxes. │  │  RED = slop / filler      │
+  └──────────────────────────┘  └──────────────────────────-┘
+
+  ┌──────────────────────────┐  ┌──────────────────────────┐
+  │  ◉  BYOK ARCHITECTURE    │  │  ◉  MULTI-PROVIDER       │
+  │                          │  │                          │
+  │  Bring Your Own Key.     │  │  OpenAI · Anthropic ·    │
+  │  Keys live in browser    │  │  Google Gemini ·         │
+  │  sessionStorage only.    │  │  OpenRouter · Ollama     │
+  │  Never touch the server. │  │  (local).                │
+  │  Cleared on tab close.   │  │  Dynamic model list.     │
+  └──────────────────────────┘  └──────────────────────────┘
+
+  ┌──────────────────────────┐  ┌──────────────────────────┐
+  │  ◉  SSRF PROTECTION      │  │  ◉  ACCESSIBILITY        │
+  │                          │  │                          │
+  │  Blocks localhost,       │  │  Respects                │
+  │  private IPs, IPv6       │  │  prefers-reduced-motion  │
+  │  loopback, link-local    │  │  for all animations.     │
+  │  addresses. Validates    │  │  Keyboard navigable.     │
+  │  content-type is HTML.   │  │  Focus-visible outlines. │
+  └──────────────────────────┘  └──────────────────────────┘
+```
+
+---
+
+## `// provider support matrix`
+
+```
+  ┌──────────────┬─────────────────────────────┬───────┬─────────────────┐
+  │  PROVIDER    │  DEFAULT MODEL              │  BYOK │  LOCAL OPTION   │
+  ├──────────────┼─────────────────────────────┼───────┼─────────────────┤
+  │  OpenAI      │  gpt-4o                     │  ✓    │  —              │
+  │  Anthropic   │  claude-sonnet-4-20250514   │  ✓    │  —              │
+  │  Google      │  gemini-2.0-flash           │  ✓    │  —              │
+  │  OpenRouter  │  varies by model            │  ✓    │  —              │
+  │  Ollama      │  llama3.1                   │  ✓    │  ✓  localhost   │
+  └──────────────┴─────────────────────────────┴───────┴─────────────────┘
+
+  All providers use structured output (JSON) with Zod v4 schema validation.
+  Model lists are fetched live from each provider's /models API endpoint.
+```
+
+---
+
+## `// signal pipeline` — Architecture
+
+```
+                          ┌──────────────────-───┐
+                          │      BROWSER         │
+                          │                      │
+                          │  ┌────────────────┐  │
+                          │  │  Input Console │  │
+                          │  │  (URL / Text)  │  │
+                          │  └───────┬────────┘  │
+                          │          │           │
+                          │  ┌───────▼────────┐  │
+                          │  │  BYOK Store    │  │
+                          │  │  (Zustand +    │  │
+                          │  │ sessionStorage)│  │
+                          │  └───────┬────────┘  │
+                          │          │           │
+                          └──────────┼───────────┘
+                                     │ POST /api/analyze
+                                     │ Headers: x-llm-provider,
+                                     │          x-llm-key, x-llm-model
+                          ┌──────────▼────────-────┐
+                          │     API ROUTE          │
+                          │                        │
+                          │  ┌──────────────────┐  │
+                          │  │  Zod Validation  │  │
+                          │  │ { url } | {text }│  │
+                          │  └────────┬─────────┘  │
+                          │           │            │
+                          │  ┌────────▼─────────┐  │
+                          │  │  SSRF Guard      │  │
+                          │  │ assertPublicHost │  │
+                          │  └────────┬─────────┘  │
+                          │           │            │
+                          │  ┌────────▼─────────┐  │
+                          │  │  Cheerio Scrape  │  │
+                          │  │ HTML → paragraphs│  │
+                          │  └────────┬─────────┘  │
+                          │           │            │
+                          │  ┌────────▼─────────┐  │
+                          │  │  LLM Analysis    │  │
+                          │  │ generateObject() │  │
+                          │  │  Zod schema out  │  │
+                          │  └────────┬─────────┘  │
+                          │           │            │
+                          │  ┌────────▼─────────┐  │
+                          │  │  Compute Metrics │  │
+                          │  │  density, slop,  │  │
+                          │  │  reading time    │  │
+                          │  └────────┬─────────┘  │
+                          │           │            │
+                          └───────────┼────────────┘
+                                      │ { id }
+                          ┌───────────▼───────────-──┐
+                          │     RESULTS PAGE         │
+                          │   /scan/[id]             │
+                          │                          │
+                          │  ┌──────────┐ ┌────────┐ │
+                          │  │ X-Ray    │ │Sidebar │ │
+                          │  │ Article  │ │Donut   │ │
+                          │  │ View     │ │Charts  │ │
+                          │  │          │ │Stats   │ │
+                          │  └──────────┘ └────────┘ │
+                          └──────────────────────────┘
+```
+
+---
+
+## `// instrument panel` — Tech Stack
+
+```
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                                                                     │
+  │   FRAMEWORK      Next.js 16.2.6    App Router + React Compiler      │
+  │   UI LIBRARY     React 19.2.4      with babel-plugin-react-compiler │
+  │   LANGUAGE       TypeScript 5+      strict mode, bundler resolution │
+  │   STYLING        Tailwind CSS v4    PostCSS + radiology dark theme  │
+  │   ANIMATION      Motion 12.40       Framer Motion successor         │
+  │   STATE          Zustand 5.0        vanilla + persist middleware    │
+  │   AI SDK         Vercel AI SDK v6   generateObject() + streaming    │
+  │   SCHEMA         Zod v4.4           compile-time type verification  │
+  │   SCRAPING       Cheerio 1.2        HTML → clean paragraphs         │
+  │   UI PRIMITIVES  @base-ui/react     Dialog, Select, Autocomplete    │
+  │   DESIGN SYSTEM  shadcn/ui          base-nova style                 │
+  │   ICONS          Lucide React       170+ icon set                   │
+  │   FONTS          IBM Plex Sans      + IBM Plex Mono + Spectral      │
+  │                                                                     │
+  └─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## `// sterilization protocol` — Security
+
+```
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  SSRF GUARD                                                     │
+  │                                                                 │
+  │  assertPublicHost() blocks:                                     │
+  │    ✗  localhost / 127.0.0.1 / ::1                              │
+  │    ✗  RFC 1918 private IPs (10.x, 172.16-31.x, 192.168.x)      │
+  │    ✗  link-local (169.254.x, fe80::)                           │
+  │    ✗  IPv6 ULA/LLA                                             │
+  │    ✗  content-type ≠ text/html                                 │
+  │    ✗  page size > 2 MB                                         │
+  │    ✗  redirects > 5                                            │
+  │                                                                 │
+  │  BYOK KEY LIFECYCLE                                             │
+  │                                                                 │
+  │  [Browser Tab]  ──x-llm-key header──▶  [API Route]  ──▶  [LLM]  │
+  │                                                                 │
+  │  • Keys stored in sessionStorage (cleared on tab close)         │
+  │  • Never stored server-side                                     │
+  │  • Sent via custom HTTP headers only                            │
+  │  • Zero .env files required                                     │
+  └─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## `// boot sequence` — Getting Started
 
 ```bash
-npm run dev     # start the dev server
-npm run build   # production build
-npm run start   # serve the production build
-npm run lint    # ESLint
+  # ◉ step 1 — clone the repo
+  git clone https://github.com/SujalXplores/slop-shrink.git
+  cd slop-shrink
+
+  # ◉ step 2 — install dependencies
+  npm install
+
+  # ◉ step 3 — start the scanner
+  npm run dev
 ```
+
+```
+  ◉ Ready at http://localhost:3000
+
+  ┌────────────────────────────────────────────────────┐
+  │  No .env file needed. No API keys in config.       │
+  │  Open the app → click the key icon → enter your    │
+  │  API key → paste a URL → scan.                     │
+  └────────────────────────────────────────────────────┘
+```
+
+---
+
+## `// available commands`
+
+```
+  ┌───────────────────┬────────────────────┬───────────────────────────┐
+  │  SCRIPT           │  COMMAND           │  PURPOSE                  │
+  ├───────────────────┼────────────────────┼───────────────────────────┤
+  │  npm run dev      │  next dev          │  Start dev server         │
+  │  npm run build    │  next build        │  Production build         │
+  │  npm run start    │  next start        │  Serve production build   │
+  │  npm run lint     │  eslint            │  Run ESLint               │
+  └───────────────────┴────────────────────┴───────────────────────────┘
+```
+
+---
+
+## `// file manifest` — Project Layout
+
+```
+  slop-shrink/
+  │
+  ├── app/
+  │   ├── layout.tsx              ◉ Root layout, fonts, metadata, dark theme
+  │   ├── page.tsx                ◉ Home page — input console + how-it-works
+  │   ├── globals.css             ◉ Radiology dark theme, atmosphere effects
+  │   ├── icon.tsx                ◉ Dynamic favicon (X-ray crosshair SVG)
+  │   ├── apple-icon.tsx          ◉ Apple touch icon
+  │   ├── robots.ts               ◉ Crawler rules
+  │   ├── sitemap.ts              ◉ Sitemap generation
+  │   ├── api/
+  │   │   ├── analyze/route.ts    ◉ POST: {url} | {text} → analysis → {id}
+  │   │   └── models/route.ts     ◉ GET: list models for a provider
+  │   └── scan/
+  │       └── [id]/page.tsx       ◉ Dynamic scan results (Server Component)
+  │
+  ├── components/
+  │   ├── input-hero.tsx          ◉ Main input form (URL/text toggle, word count)
+  │   ├── key-modal.tsx           ◉ BYOK API key modal
+  │   ├── site-header.tsx         ◉ Sticky header with status indicators
+  │   ├── xray-article.tsx        ◉ X-Ray article view (collapse/expand/facts)
+  │   ├── xray-sidebar.tsx        ◉ Stats dashboard (donut chart, metrics)
+  │   ├── xray-toggle.tsx         ◉ Floating X-Ray mode toggle
+  │   ├── providers/              ◉ Zustand store context providers
+  │   └── ui/                     ◉ Design-system primitives (shadcn/ui)
+  │
+  ├── lib/
+  │   ├── analyze.ts              ◉ Scan orchestration + derived metrics
+  │   ├── scrape.ts               ◉ URL → clean paragraphs (SSRF guard)
+  │   ├── llm/
+  │   │   ├── index.ts            ◉ analyzeParagraphs() — Vercel AI SDK call
+  │   │   ├── schema.ts           ◉ Zod schemas + compile-time type proof
+  │   │   ├── registry.ts         ◉ Model resolver (provider → LanguageModel)
+  │   │   └── models.ts           ◉ Dynamic model listers per provider
+  │   ├── types.ts                ◉ ParagraphAnalysis, ScanResult types
+  │   ├── errors.ts               ◉ AppError, ScrapeError, LlmError classes
+  │   ├── providers.ts            ◉ Provider registry (5 providers)
+  │   ├── storage.ts              ◉ In-memory scan store (swap for prod)
+  │   ├── byok.ts                 ◉ BYOK header encoding/decoding
+  │   ├── byok-store.ts           ◉ Zustand store (sessionStorage)
+  │   ├── xray-store.ts           ◉ X-Ray view Zustand store
+  │   └── utils.ts                ◉ cn(), countWords(), densityTier()
+  │
+  └── public/                     ◉ Static assets
+```
+
+---
+
+<div align="center">
+
+## `// deployment status`
+
+```
+  ◉  DEPLOYED ON VERCEL
+  ◉  LIVE AT  https://slopshrink.vercel.app
+  ◉  SOURCE   https://github.com/SujalXplores/slop-shrink
+```
+
+---
+
+```
+  ╔═══════════════════════════════════════════════════════════════════╗
+  ║                                                                   ║
+  ║   Built with ◉ for the hackathon.                                 ║
+  ║   No filler. No slop. Just signal.                                ║
+  ║                                                                   ║
+  ╚═══════════════════════════════════════════════════════════════════╝
+```
+
+</div>

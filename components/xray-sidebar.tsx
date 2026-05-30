@@ -14,9 +14,10 @@ const TIER_STROKE = {
 
 interface XRaySidebarProps {
   scan: ScanResult;
+  compact?: boolean;
 }
 
-export function XRaySidebar({ scan }: XRaySidebarProps) {
+export function XRaySidebar({ scan, compact }: XRaySidebarProps) {
   const slopCount = scan.analysis.filter((a) => a.isSlop).length;
   const totalFacts = scan.analysis.reduce(
     (n, a) => n + a.extractedFacts.length,
@@ -27,6 +28,72 @@ export function XRaySidebar({ scan }: XRaySidebarProps) {
   const strokeColor = TIER_STROKE[tier];
   const offset = CIRCUMFERENCE * (1 - scan.overallDensity / 100);
 
+  if (compact) {
+    return (
+      <div className="glass flex items-center gap-4 rounded-2xl px-4 py-3 sm:gap-6 sm:px-6 sm:py-4">
+        <div className="relative grid h-20 w-20 shrink-0 place-items-center sm:h-24 sm:w-24">
+          <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
+            <circle
+              cx="60"
+              cy="60"
+              r="52"
+              fill="none"
+              stroke="var(--color-line)"
+              strokeWidth="8"
+            />
+            <motion.circle
+              cx="60"
+              cy="60"
+              r="52"
+              fill="none"
+              stroke={strokeColor}
+              strokeWidth="8"
+              strokeLinecap="round"
+              strokeDasharray={CIRCUMFERENCE}
+              initial={{ strokeDashoffset: CIRCUMFERENCE }}
+              animate={{ strokeDashoffset: offset }}
+              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+            />
+          </svg>
+          <div className="absolute text-center">
+            <motion.span
+              className="font-mono text-xl font-semibold sm:text-2xl"
+              style={{ color: strokeColor }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              {scan.overallDensity}
+            </motion.span>
+            <span className="block font-mono text-[7px] uppercase tracking-[0.2em] text-ink-faint sm:text-[8px]">
+              {tier}
+            </span>
+          </div>
+        </div>
+        <dl className="flex flex-1 flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[10px] uppercase tracking-[0.14em] text-ink-faint sm:text-xs">
+          <div className="flex items-center gap-1.5">
+            <dt>paragraphs</dt>
+            <dd className="text-ink-dim">{scan.paragraphs.length}</dd>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <dt>slop</dt>
+            <dd className="text-slop-dim">{slopCount}</dd>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <dt>facts</dt>
+            <dd className="text-signal-dim">{totalFacts}</dd>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <dt>saved</dt>
+            <dd className="text-ink-dim">
+              {scan.readingTimeSavedMin} min
+            </dd>
+          </div>
+        </dl>
+      </div>
+    );
+  }
+
   return (
     <div className="sticky top-20 space-y-4">
       <div className="glass rounded-2xl p-6">
@@ -34,7 +101,7 @@ export function XRaySidebar({ scan }: XRaySidebarProps) {
           information density
         </p>
         <div className="mt-4 flex items-center justify-center">
-          <div className="relative grid h-36 w-36 place-items-center">
+          <div className="relative grid h-24 w-24 place-items-center sm:h-36 sm:w-36">
             <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
               <circle
                 cx="60"
@@ -60,7 +127,7 @@ export function XRaySidebar({ scan }: XRaySidebarProps) {
             </svg>
             <div className="absolute text-center">
               <motion.span
-                className="font-mono text-3xl font-semibold"
+                className="font-mono text-2xl font-semibold sm:text-3xl"
                 style={{ color: strokeColor }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

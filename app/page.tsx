@@ -36,7 +36,7 @@ export default function Home() {
           {STEPS.map((step, i) => (
             <div
               key={step.n}
-              className="animate-rise panel rounded-xl p-5"
+              className="animate-rise panel rounded-xl p-3 sm:p-5"
               style={
                 { '--rise-delay': `${440 + i * 90}ms` } as React.CSSProperties
               }

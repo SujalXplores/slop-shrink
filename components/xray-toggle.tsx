@@ -7,18 +7,18 @@ export function XRayToggle() {
   const toggleXray = useXRayStore((s) => s.toggleXray);
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] right-6 z-50 sm:bottom-6">
       <button
         type="button"
         onClick={toggleXray}
         aria-pressed={xrayMode}
         title="Toggle X-Ray mode"
-        className={`glass group flex items-center gap-3 rounded-full py-2.5 pl-3 pr-4 transition-all duration-300 ${
+        className={`glass group flex items-center gap-2 rounded-full py-2 pl-2.5 pr-3 transition-all duration-300 sm:gap-3 sm:py-2.5 sm:pl-3 sm:pr-4 ${
           xrayMode ? 'ring-glow-signal' : ''
         }`}
       >
         <span
-          className={`flex h-9 w-9 items-center justify-center rounded-full text-lg transition-colors duration-300 ${
+          className={`flex h-7 w-7 items-center justify-center rounded-full text-base transition-colors duration-300 sm:h-9 sm:w-9 sm:text-lg ${
             xrayMode
               ? 'bg-signal/15 text-signal text-glow-signal'
               : 'bg-panel-2 text-ink-dim'
@@ -26,7 +26,7 @@ export function XRayToggle() {
         >
           🩻
         </span>
-        <span className="flex flex-col items-start leading-tight">
+        <span className="hidden flex-col items-start leading-tight sm:flex">
           <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-ink-faint">
             x-ray mode
           </span>
@@ -39,7 +39,7 @@ export function XRayToggle() {
           </span>
         </span>
         <span
-          className={`relative ml-1 h-5 w-9 rounded-full border transition-colors duration-300 ${
+          className={`relative ml-1 hidden h-5 w-9 rounded-full border transition-colors duration-300 sm:inline ${
             xrayMode
               ? 'border-signal/50 bg-signal/20'
               : 'border-line-bright bg-panel'

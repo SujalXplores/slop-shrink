@@ -194,8 +194,8 @@ export function InputHero() {
             />
           )}
 
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-line/70 pt-4">
-            <div className="flex items-center gap-2">
+          <div className="mt-4 flex flex-col gap-3 border-t border-line/70 pt-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
                 try:
               </span>
@@ -227,7 +227,7 @@ export function InputHero() {
               type="submit"
               disabled={!canSubmit || loading}
               aria-busy={loading}
-              className="group inline-flex items-center gap-2 rounded-lg bg-signal px-5 py-2.5 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-void transition-all enabled:hover:brightness-110 enabled:hover:ring-glow-signal disabled:cursor-not-allowed disabled:bg-panel-2 disabled:text-ink-faint"
+              className="group inline-flex items-center justify-center gap-2 rounded-lg bg-signal px-5 py-2.5 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-void transition-all enabled:hover:brightness-110 enabled:hover:ring-glow-signal disabled:cursor-not-allowed disabled:bg-panel-2 disabled:text-ink-faint"
             >
               {loading ? 'x-raying' : 'run x-ray'}
               <span

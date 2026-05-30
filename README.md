@@ -153,7 +153,7 @@ Here's what a scan result looks like — every paragraph scored, classified, and
   │  Keys live in browser    │  │  Google Gemini ·         │
   │  sessionStorage only.    │  │  OpenRouter · Ollama     │
   │  Never touch the server. │  │  (local).                │
-  │  Cleared on tab close.   │  │  Dynamic model list.     │
+  │  Cleared on tab close.   │  │  Locked best-tier models.│
   └──────────────────────────┘  └──────────────────────────┘
 
   ┌──────────────────────────┐  ┌──────────────────────────┐
@@ -173,17 +173,17 @@ Here's what a scan result looks like — every paragraph scored, classified, and
 
 ```
   ┌──────────────┬─────────────────────────────┬───────┬─────────────────┐
-  │  PROVIDER    │  DEFAULT MODEL              │  BYOK │  LOCAL OPTION   │
+  │  PROVIDER    │  LOCKED MODEL               │  BYOK │  LOCAL OPTION   │
   ├──────────────┼─────────────────────────────┼───────┼─────────────────┤
-  │  OpenAI      │  gpt-4o                     │  ✓    │  —              │
-  │  Anthropic   │  claude-sonnet-4-20250514   │  ✓    │  —              │
-  │  Google      │  gemini-2.0-flash           │  ✓    │  —              │
-  │  OpenRouter  │  varies by model            │  ✓    │  —              │
-  │  Ollama      │  llama3.1                   │  ✓    │  ✓  localhost   │
+  │  OpenAI      │  gpt-5.5-instant            │  ✓    │  —              │
+  │  Anthropic   │  claude-opus-4-7-20260512   │  ✓    │  —              │
+  │  Google      │  gemini-3.5-flash           │  ✓    │  —              │
+  │  OpenRouter  │  openai/gpt-5.5-instant       │  ✓    │  —              │
+  │  Ollama      │  llama3.3                   │  ✓    │  ✓  localhost   │
   └──────────────┴─────────────────────────────┴───────┴─────────────────┘
 
   All providers use structured output (JSON) with Zod v4 schema validation.
-  Model lists are fetched live from each provider's /models API endpoint.
+  Models are locked to best-tier for optimal output quality.
 ```
 
 ---
@@ -206,9 +206,9 @@ Here's what a scan result looks like — every paragraph scored, classified, and
                           │  └───────┬────────┘  │
                           │          │           │
                           └──────────┼───────────┘
-                                     │ POST /api/analyze
-                                     │ Headers: x-llm-provider,
-                                     │          x-llm-key, x-llm-model
+                                      │ POST /api/analyze
+                                      │ Headers: x-llm-provider,
+                                      │          x-llm-key
                           ┌──────────▼────────-────┐
                           │     API ROUTE          │
                           │                        │
@@ -363,8 +363,7 @@ Here's what a scan result looks like — every paragraph scored, classified, and
   │   ├── robots.ts               ◉ Crawler rules
   │   ├── sitemap.ts              ◉ Sitemap generation
   │   ├── api/
-  │   │   ├── analyze/route.ts    ◉ POST: {url} | {text} → analysis → {id}
-  │   │   └── models/route.ts     ◉ GET: list models for a provider
+  │   │   └── analyze/route.ts    ◉ POST: {url} | {text} → analysis → {id}
   │   └── scan/
   │       └── [id]/page.tsx       ◉ Dynamic scan results (Server Component)
   │
@@ -384,8 +383,7 @@ Here's what a scan result looks like — every paragraph scored, classified, and
   │   ├── llm/
   │   │   ├── index.ts            ◉ analyzeParagraphs() — Vercel AI SDK call
   │   │   ├── schema.ts           ◉ Zod schemas + compile-time type proof
-  │   │   ├── registry.ts         ◉ Model resolver (provider → LanguageModel)
-  │   │   └── models.ts           ◉ Dynamic model listers per provider
+  │   │   └── registry.ts         ◉ Model resolver (provider → LanguageModel)
   │   ├── types.ts                ◉ ParagraphAnalysis, ScanResult types
   │   ├── errors.ts               ◉ AppError, ScrapeError, LlmError classes
   │   ├── providers.ts            ◉ Provider registry (5 providers)

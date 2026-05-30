@@ -34,7 +34,6 @@ export function InputHero() {
   const byokProvider = useByokStore((s) => s.provider);
   const byokApiKey = useByokStore((s) => s.apiKey);
   const byokBaseURL = useByokStore((s) => s.baseURL);
-  const byokModel = useByokStore((s) => s.model);
 
   const words = useMemo(() => countWords(text), [text]);
   const urlOk = useMemo(() => isValidHttpUrl(url), [url]);
@@ -61,7 +60,6 @@ export function InputHero() {
           'content-type': 'application/json',
           ...byokHeaders({
             provider: byokProvider,
-            model: byokModel,
             apiKey: byokApiKey,
             baseURL: byokBaseURL,
           }),

@@ -19,7 +19,6 @@ export { PROVIDER_IDS } from "../providers";
 
 export interface ModelOverrides {
   provider?: string;
-  model?: string;
   apiKey?: string;
   baseURL?: string;
 }
@@ -103,7 +102,6 @@ export async function resolveModel(
   const requestedProvider = overrides?.provider?.trim().toLowerCase();
 
   let providerId: ProviderId;
-  let modelId: string;
 
   if (requestedProvider) {
     if (!isProviderId(requestedProvider)) {
@@ -114,11 +112,11 @@ export async function resolveModel(
       );
     }
     providerId = requestedProvider;
-    modelId = overrides?.model?.trim() || PROVIDERS[providerId].defaultModel;
   } else {
     providerId = "openai";
-    modelId = overrides?.model?.trim() || PROVIDERS[providerId].defaultModel;
   }
+
+  const modelId = PROVIDERS[providerId].lockedModel;
 
   const model = await registry[providerId].createModel(modelId, {
     apiKey: overrides?.apiKey,

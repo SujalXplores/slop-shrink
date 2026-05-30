@@ -11,7 +11,7 @@ export type ProviderId = (typeof PROVIDER_IDS)[number];
 export interface ProviderMeta {
   id: ProviderId;
   label: string;
-  defaultModel: string;
+  lockedModel: string;
   usesApiKey: boolean;
   keyUrl?: string;
   keyPlaceholder?: string;
@@ -21,7 +21,7 @@ export const PROVIDERS: Record<ProviderId, ProviderMeta> = {
   openai: {
     id: "openai",
     label: "OpenAI",
-    defaultModel: "gpt-4o-mini",
+    lockedModel: "gpt-5.5-instant",
     usesApiKey: true,
     keyUrl: "https://platform.openai.com/api-keys",
     keyPlaceholder: "sk-…",
@@ -29,7 +29,7 @@ export const PROVIDERS: Record<ProviderId, ProviderMeta> = {
   anthropic: {
     id: "anthropic",
     label: "Anthropic",
-    defaultModel: "claude-haiku-4-5",
+    lockedModel: "claude-opus-4-7-20260512",
     usesApiKey: true,
     keyUrl: "https://console.anthropic.com/settings/keys",
     keyPlaceholder: "sk-ant-…",
@@ -37,7 +37,7 @@ export const PROVIDERS: Record<ProviderId, ProviderMeta> = {
   google: {
     id: "google",
     label: "Google Gemini",
-    defaultModel: "gemini-2.5-flash",
+    lockedModel: "gemini-3.5-flash",
     usesApiKey: true,
     keyUrl: "https://aistudio.google.com/app/apikey",
     keyPlaceholder: "AIza…",
@@ -45,7 +45,7 @@ export const PROVIDERS: Record<ProviderId, ProviderMeta> = {
   openrouter: {
     id: "openrouter",
     label: "OpenRouter",
-    defaultModel: "openai/gpt-4o-mini",
+    lockedModel: "openai/gpt-5.5-instant",
     usesApiKey: true,
     keyUrl: "https://openrouter.ai/keys",
     keyPlaceholder: "sk-or-…",
@@ -53,7 +53,7 @@ export const PROVIDERS: Record<ProviderId, ProviderMeta> = {
   ollama: {
     id: "ollama",
     label: "Ollama (local)",
-    defaultModel: "llama3.2",
+    lockedModel: "llama3.3",
     usesApiKey: false,
     keyPlaceholder: "http://127.0.0.1:11434/api",
   },

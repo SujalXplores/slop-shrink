@@ -10,7 +10,7 @@ const STEPS = [
   {
     n: '02',
     title: 'Score',
-    body: "gpt-4o-mini rates each paragraph's information density and extracts the hard facts, numbers, and steps.",
+    body: "The AI model rates each paragraph's information density and extracts the hard facts, numbers, and steps.",
   },
   {
     n: '03',

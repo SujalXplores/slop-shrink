@@ -4,14 +4,12 @@ import type { ProviderId } from "./providers";
 
 export interface ByokState {
   provider: ProviderId;
-  model: string;
   apiKey: string;
   baseURL: string;
 }
 
 export interface ByokActions {
   setProvider: (p: ProviderId) => void;
-  setModel: (m: string) => void;
   setApiKey: (k: string) => void;
   setBaseURL: (u: string) => void;
   setCredentials: (c: Partial<ByokState>) => void;
@@ -22,7 +20,6 @@ export type ByokStore = ByokState & ByokActions;
 
 export const defaultByokState: ByokState = {
   provider: "openai",
-  model: "",
   apiKey: "",
   baseURL: "",
 };
@@ -33,11 +30,10 @@ export const createByokStore = (init: ByokState = defaultByokState) =>
       (set) => ({
         ...init,
         setProvider: (p) => set({ provider: p }),
-        setModel: (m) => set({ model: m }),
         setApiKey: (k) => set({ apiKey: k }),
         setBaseURL: (u) => set({ baseURL: u }),
         setCredentials: (c) => set(c),
-        clearCredentials: () => set({ model: "", apiKey: "", baseURL: "" }),
+        clearCredentials: () => set({ apiKey: "", baseURL: "" }),
       }),
       {
         name: "slopshrink-byok",

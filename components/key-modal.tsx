@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useByokStore } from '@/components/providers/byok-store-provider';
 import { PROVIDER_LIST, PROVIDERS, type ProviderId } from '@/lib/providers';
-import { byokHeaders } from '@/lib/byok';
 import {
   Dialog,
   DialogContent,
@@ -22,30 +21,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
-import {
-  Autocomplete,
-  AutocompleteInput,
-  AutocompleteContent,
-  AutocompleteList,
-  AutocompleteItem,
-  AutocompleteEmpty,
-} from '@/components/ui/autocomplete';
-
-type ModelsStatus = 'idle' | 'loading' | 'loaded' | 'error';
 
 export function KeyModal() {
   const [open, setOpen] = useState(false);
   const [showKey, setShowKey] = useState(false);
-  const [models, setModels] = useState<string[]>([]);
-  const [modelsStatus, setModelsStatus] = useState<ModelsStatus>('idle');
-  const [modelsError, setModelsError] = useState<string | null>(null);
 
   const provider = useByokStore((s) => s.provider);
-  const model = useByokStore((s) => s.model);
   const apiKey = useByokStore((s) => s.apiKey);
   const baseURL = useByokStore((s) => s.baseURL);
   const setProvider = useByokStore((s) => s.setProvider);
-  const setModel = useByokStore((s) => s.setModel);
   const setApiKey = useByokStore((s) => s.setApiKey);
   const setBaseURL = useByokStore((s) => s.setBaseURL);
   const clearCredentials = useByokStore((s) => s.clearCredentials);
@@ -55,9 +39,6 @@ export function KeyModal() {
   const handleClear = useCallback(() => {
     clearCredentials();
     setShowKey(false);
-    setModels([]);
-    setModelsStatus('idle');
-    setModelsError(null);
   }, [clearCredentials]);
 
   useEffect(() => {
@@ -65,50 +46,6 @@ export function KeyModal() {
     document.addEventListener('byok:open', onOpen);
     return () => document.removeEventListener('byok:open', onOpen);
   }, []);
-
-  const needsKey = meta.usesApiKey;
-  useEffect(() => {
-    if (!open) return;
-    const key = apiKey.trim();
-    const controller = new AbortController();
-    const timer = setTimeout(async () => {
-      if (needsKey && !key) {
-        setModels([]);
-        setModelsStatus('idle');
-        setModelsError(null);
-        return;
-      }
-      setModelsStatus('loading');
-      setModelsError(null);
-      try {
-        const res = await fetch('/api/models', {
-          headers: byokHeaders({ provider, apiKey: key, baseURL }),
-          signal: controller.signal,
-        });
-        const data = (await res.json().catch(() => null)) as {
-          models?: string[];
-          message?: string;
-        } | null;
-        if (!res.ok) {
-          throw new Error(data?.message ?? 'Could not load models.');
-        }
-        setModels(Array.isArray(data?.models) ? data.models : []);
-        setModelsStatus('loaded');
-      } catch (err) {
-        if (controller.signal.aborted) return;
-        setModels([]);
-        setModelsStatus('error');
-        setModelsError(
-          err instanceof Error ? err.message : 'Could not load models.',
-        );
-      }
-    }, 500);
-
-    return () => {
-      controller.abort();
-      clearTimeout(timer);
-    };
-  }, [open, provider, apiKey, baseURL, needsKey]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -187,7 +124,6 @@ export function KeyModal() {
                 value={provider}
                 onValueChange={(v) => {
                   setProvider(v as ProviderId);
-                  setModel('');
                 }}
               >
                 <SelectTrigger className="h-9 w-full border-line bg-panel-2 pl-3 text-left font-mono text-sm text-ink">
@@ -209,68 +145,15 @@ export function KeyModal() {
 
             <Field>
               <FieldLabel className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
-                Model{' '}
-                <span className="text-ink-faint/50">
-                  (blank = provider default)
-                </span>
+                Locked Model
               </FieldLabel>
-              <Autocomplete
-                items={models}
-                value={model}
-                onValueChange={setModel}
-              >
-                <AutocompleteInput
-                  placeholder={meta.defaultModel}
-                  autoComplete="off"
-                  spellCheck={false}
-                  className="border-line bg-panel-2 font-mono text-ink placeholder:text-ink-faint/40"
-                />
-                <AutocompleteContent className="border border-line bg-panel-2 shadow-xl">
-                  <AutocompleteList>
-                    {(item: string) => (
-                      <AutocompleteItem
-                        key={item}
-                        value={item}
-                        className="font-mono text-ink data-highlighted:bg-signal/10 data-highlighted:text-signal"
-                      >
-                        {item}
-                      </AutocompleteItem>
-                    )}
-                  </AutocompleteList>
-                  <AutocompleteEmpty className="font-mono text-ink-faint">
-                    no match · type any model id
-                  </AutocompleteEmpty>
-                </AutocompleteContent>
-              </Autocomplete>
-              <p
-                className="mt-1.5 font-mono text-[10px] tracking-[0.04em] text-ink-faint"
-                role="status"
-                aria-live="polite"
-              >
-                {modelsStatus === 'loading' && (
-                  <span className="text-signal-dim">
-                    <span className="caret-blink">▰</span> loading models…
-                  </span>
-                )}
-                {modelsStatus === 'loaded' &&
-                  (models.length > 0 ? (
-                    <span className="text-signal-dim">
-                      {models.length} compatible models · pick or type one
-                    </span>
-                  ) : (
-                    <span>no compatible models returned · type a model id</span>
-                  ))}
-                {modelsStatus === 'error' && (
-                  <span className="text-slop-dim">
-                    ✕ {modelsError} · you can still type a model id
-                  </span>
-                )}
-                {modelsStatus === 'idle' &&
-                  (needsKey ? (
-                    <span>enter your API key above to load models</span>
-                  ) : (
-                    <span>models load from your Ollama server</span>
-                  ))}
+              <div className="flex h-9 items-center rounded-lg border border-line bg-panel-2 px-3">
+                <span className="font-mono text-sm text-ink-dim">
+                  {meta.lockedModel}
+                </span>
+              </div>
+              <p className="mt-1.5 font-mono text-[10px] tracking-[0.04em] text-ink-faint">
+                Best-tier model selected for optimal output
               </p>
             </Field>
 

@@ -59,7 +59,7 @@ export async function POST(request: Request): Promise<Response> {
 function extractOverrides(request: Request): ModelOverrides | undefined {
   const creds = readByokHeaders(request.headers);
 
-  if (!creds.provider && !creds.model && !creds.apiKey && !creds.baseURL) {
+  if (!creds.provider && !creds.apiKey && !creds.baseURL) {
     return undefined;
   }
 

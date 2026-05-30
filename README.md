@@ -178,7 +178,7 @@ Here's what a scan result looks like — every paragraph scored, classified, and
   │  OpenAI      │  gpt-5.5-instant            │  ✓    │  —              │
   │  Anthropic   │  claude-opus-4-7-20260512   │  ✓    │  —              │
   │  Google      │  gemini-3.5-flash           │  ✓    │  —              │
-  │  OpenRouter  │  openai/gpt-5.5-instant       │  ✓    │  —              │
+  │  OpenRouter  │  openai/gpt-5.5              │  ✓    │  —              │
   │  Ollama      │  llama3.3                   │  ✓    │  ✓  localhost   │
   └──────────────┴─────────────────────────────┴───────┴─────────────────┘
 

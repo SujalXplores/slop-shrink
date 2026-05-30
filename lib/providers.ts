@@ -45,7 +45,7 @@ export const PROVIDERS: Record<ProviderId, ProviderMeta> = {
   openrouter: {
     id: "openrouter",
     label: "OpenRouter",
-    lockedModel: "openai/gpt-5.5-instant",
+    lockedModel: "openai/gpt-5.5",
     usesApiKey: true,
     keyUrl: "https://openrouter.ai/keys",
     keyPlaceholder: "sk-or-…",

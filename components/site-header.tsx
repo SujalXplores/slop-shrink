@@ -29,7 +29,7 @@ export function SiteHeader() {
             <button
               type="button"
               onClick={openKeyModal}
-              className="flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:bg-panel-2"
+              className="cursor-pointer flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:bg-panel-2"
               title="Configure API key"
             >
               <span

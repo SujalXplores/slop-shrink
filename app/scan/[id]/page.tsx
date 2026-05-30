@@ -38,7 +38,7 @@ export default async function ScanPage({
         <div className="mx-auto flex h-12 max-w-6xl items-center justify-between px-5">
           <Link
             href="/"
-            className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-faint transition-colors hover:text-signal"
+            className="cursor-pointer font-mono text-[11px] uppercase tracking-[0.18em] text-ink-faint transition-colors hover:text-signal"
           >
             ← new scan
           </Link>
@@ -84,7 +84,7 @@ export default async function ScanPage({
                   </div>
                   <Link
                     href="/"
-                    className="mt-1 inline-flex items-center gap-2 rounded-lg bg-signal px-4 py-2 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-void transition-all hover:brightness-110 hover:ring-glow-signal"
+                    className="cursor-pointer mt-1 inline-flex items-center gap-2 rounded-lg bg-signal px-4 py-2 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-void transition-all hover:brightness-110 hover:ring-glow-signal"
                   >
                     start a scan ▸
                   </Link>

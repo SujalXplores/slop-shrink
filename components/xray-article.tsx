@@ -78,7 +78,7 @@ export function XRayArticle({ scan }: XRayArticleProps) {
                     transition={{ duration: 0.2 }}
                     type="button"
                     onClick={() => revealParagraph(i)}
-                    className="mt-1 flex items-center gap-2 rounded-md px-2 py-1 text-left transition-colors hover:bg-panel-2"
+                    className="mt-1 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-left transition-colors hover:bg-panel-2"
                   >
                     <span className="h-1 w-1 rounded-full bg-slop" />
                     <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-slop-dim">

@@ -130,7 +130,7 @@ export function KeyModal() {
               <button
                 type="button"
                 aria-label="Close"
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-ink-faint transition-colors hover:bg-panel-2 hover:text-ink"
+                className="cursor-pointer flex h-8 w-8 items-center justify-center rounded-lg text-ink-faint transition-colors hover:bg-panel-2 hover:text-ink"
               />
             }
           >
@@ -285,7 +285,7 @@ export function KeyModal() {
                       href={meta.keyUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-mono text-[9px] text-signal-dim transition-colors hover:text-signal"
+                      className="cursor-pointer font-mono text-[9px] text-signal-dim transition-colors hover:text-signal"
                     >
                       get key ↗
                     </a>
@@ -304,7 +304,7 @@ export function KeyModal() {
                   <button
                     type="button"
                     onClick={() => setShowKey(!showKey)}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-faint transition-colors hover:bg-panel hover:text-ink-dim"
+                    className="cursor-pointer absolute right-1 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-faint transition-colors hover:bg-panel hover:text-ink-dim"
                   >
                     {showKey ? 'hide' : 'show'}
                   </button>

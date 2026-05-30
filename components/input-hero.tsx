@@ -143,7 +143,7 @@ export function InputHero() {
                     setMode(m);
                     setError(null);
                   }}
-                  className={`rounded-md px-3.5 py-1.5 font-mono text-xs uppercase tracking-[0.18em] transition-colors ${
+                  className={`cursor-pointer rounded-md px-3.5 py-1.5 font-mono text-xs uppercase tracking-[0.18em] transition-colors ${
                     mode === m
                       ? 'bg-panel-2 text-signal ring-glow-signal'
                       : 'text-ink-faint hover:text-ink-dim'
@@ -206,7 +206,7 @@ export function InputHero() {
                   setUrl(EXAMPLE_URL);
                   setError(null);
                 }}
-                className="panel rounded-md px-2.5 py-1 font-mono text-[11px] text-ink-dim transition-colors hover:text-signal"
+                className="cursor-pointer panel rounded-md px-2.5 py-1 font-mono text-[11px] text-ink-dim transition-colors hover:text-signal"
               >
                 a wikipedia article
               </button>
@@ -217,7 +217,7 @@ export function InputHero() {
                   setText(EXAMPLE_TEXT);
                   setError(null);
                 }}
-                className="panel rounded-md px-2.5 py-1 font-mono text-[11px] text-ink-dim transition-colors hover:text-signal"
+                className="cursor-pointer panel rounded-md px-2.5 py-1 font-mono text-[11px] text-ink-dim transition-colors hover:text-signal"
               >
                 a slop sample
               </button>
@@ -227,7 +227,7 @@ export function InputHero() {
               type="submit"
               disabled={!canSubmit || loading}
               aria-busy={loading}
-              className="group inline-flex items-center justify-center gap-2 rounded-lg bg-signal px-5 py-2.5 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-void transition-all enabled:hover:brightness-110 enabled:hover:ring-glow-signal disabled:cursor-not-allowed disabled:bg-panel-2 disabled:text-ink-faint"
+              className="group inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-signal px-5 py-2.5 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-void transition-all enabled:hover:brightness-110 enabled:hover:ring-glow-signal disabled:cursor-not-allowed disabled:bg-panel-2 disabled:text-ink-faint"
             >
               {loading ? 'x-raying' : 'run x-ray'}
               <span

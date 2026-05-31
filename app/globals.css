@@ -1,40 +1,35 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "tailwindcss-animate";
 
-/* The app is always dark (a radiology viewing room). Keep `.dark` on <html> so
-   dark: utilities stay live, and override v4's default prefers-color-scheme. */
+/* Keep `.dark` live on <html> and override v4's default prefers-color-scheme. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* ---- Surfaces: deep radiology slate (never pure black) ---- */
-  --color-void: oklch(0.145 0.012 256); /* page base */
-  --color-panel: oklch(0.188 0.014 256); /* raised panel */
-  --color-panel-2: oklch(0.228 0.016 256); /* higher panel */
-  --color-line: oklch(0.32 0.018 256); /* hairline borders */
+  --color-void: oklch(0.145 0.012 256);
+  --color-panel: oklch(0.188 0.014 256);
+  --color-panel-2: oklch(0.228 0.016 256);
+  --color-line: oklch(0.32 0.018 256);
   --color-line-bright: oklch(0.43 0.021 256);
 
-  /* ---- Ink ---- */
-  --color-ink: oklch(0.93 0.012 250); /* primary text */
-  --color-ink-dim: oklch(0.74 0.014 256); /* secondary */
-  --color-ink-faint: oklch(0.55 0.016 256); /* captions / metadata */
+  --color-ink: oklch(0.93 0.012 250);
+  --color-ink-dim: oklch(0.74 0.014 256);
+  --color-ink-faint: oklch(0.55 0.016 256);
 
-  /* ---- Semantic density scale ---- */
-  --color-signal: oklch(0.87 0.23 148); /* phosphor green = facts / high density */
+  --color-signal: oklch(0.87 0.23 148);
   --color-signal-dim: oklch(0.72 0.16 150);
-  --color-warn: oklch(0.84 0.16 84); /* amber = mid density */
-  --color-slop: oklch(0.68 0.21 24); /* hot red = slop / noise */
+  --color-warn: oklch(0.84 0.16 84);
+  --color-slop: oklch(0.68 0.21 24);
   --color-slop-dim: oklch(0.57 0.16 24);
 
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
 }
 
-/* Fonts come from next/font (see app/layout.tsx). `inline` so the var() values
-   resolve against the injected font variables rather than being emitted to :root. */
+/* `inline` so var() values resolve against next/font variables, not :root. */
 @theme inline {
-  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-mono: var(--font-plex-mono), ui-monospace, 'SF Mono', Menlo, monospace;
   --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-read: var(--font-spectral), Georgia, "Times New Roman", serif;
+  --font-read: var(--font-spectral), Georgia, 'Times New Roman', serif;
 }
 
 @layer base {
@@ -70,7 +65,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  /* v4: border utilities default to currentColor -- pin a sensible hairline instead. */
+  /* v4 border utilities default to currentColor; pin a hairline instead. */
   *,
   ::before,
   ::after {
@@ -103,7 +98,6 @@
   }
 }
 
-/* ---- Atmosphere: blueprint grid + scanner glow + film grain ---- */
 .atmosphere {
   position: fixed;
   inset: 0;
@@ -123,7 +117,7 @@
     var(--color-void);
 }
 .atmosphere::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   background-image:
@@ -138,12 +132,16 @@
       transparent 1px
     );
   background-size: 38px 38px;
-  -webkit-mask-image: radial-gradient(82% 72% at 50% 28%, #000 28%, transparent 86%);
+  -webkit-mask-image: radial-gradient(
+    82% 72% at 50% 28%,
+    #000 28%,
+    transparent 86%
+  );
   mask-image: radial-gradient(82% 72% at 50% 28%, #000 28%, transparent 86%);
   opacity: 0.55;
 }
 .atmosphere::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -151,12 +149,12 @@
   mix-blend-mode: soft-light;
 }
 
-/* ---- Reusable surfaces ---- */
 @utility glass {
   background: color-mix(in oklch, var(--color-panel) 58%, transparent);
   backdrop-filter: blur(16px) saturate(150%);
   -webkit-backdrop-filter: blur(16px) saturate(150%);
-  border: 1px solid color-mix(in oklch, var(--color-line-bright) 65%, transparent);
+  border: 1px solid
+    color-mix(in oklch, var(--color-line-bright) 65%, transparent);
   box-shadow:
     inset 0 1px 0 0 color-mix(in oklch, #fff 7%, transparent),
     0 24px 70px -34px #000;
@@ -166,9 +164,9 @@
   border: 1px solid var(--color-line);
 }
 
-/* ---- Glow accents ---- */
 @utility text-glow-signal {
-  text-shadow: 0 0 20px color-mix(in oklch, var(--color-signal) 55%, transparent);
+  text-shadow: 0 0 20px
+    color-mix(in oklch, var(--color-signal) 55%, transparent);
 }
 @utility text-glow-slop {
   text-shadow: 0 0 20px color-mix(in oklch, var(--color-slop) 50%, transparent);
@@ -179,13 +177,12 @@
     0 0 34px -8px color-mix(in oklch, var(--color-signal) 55%, transparent);
 }
 
-/* ---- Scan sweep (decorative light passing over a panel) ---- */
 @utility scan-sweep {
   position: relative;
   overflow: hidden;
 }
 .scan-sweep::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: -50% -10%;
   background: linear-gradient(
@@ -199,7 +196,6 @@
   pointer-events: none;
 }
 
-/* ---- Staggered entrance (set --rise-delay inline per element) ---- */
 @utility animate-rise {
   animation: rise 0.72s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: var(--rise-delay, 0ms);

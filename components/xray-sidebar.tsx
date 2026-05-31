@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { densityTier } from '@/lib/utils';
+import { densityTier, formatReadingTimeSaved } from '@/lib/utils';
 import type { ScanResult } from '@/lib/types';
 
 const CIRCUMFERENCE = 2 * Math.PI * 52;
@@ -27,6 +27,7 @@ export function XRaySidebar({ scan, compact }: XRaySidebarProps) {
   const tier = densityTier(scan.overallDensity);
   const strokeColor = TIER_STROKE[tier];
   const offset = CIRCUMFERENCE * (1 - scan.overallDensity / 100);
+  const timeSaved = formatReadingTimeSaved(scan.readingTimeSavedMin);
 
   if (compact) {
     return (
@@ -86,7 +87,7 @@ export function XRaySidebar({ scan, compact }: XRaySidebarProps) {
           <div className="flex items-center gap-1.5">
             <dt>saved</dt>
             <dd className="text-ink-dim">
-              {scan.readingTimeSavedMin} min
+              {timeSaved.value} {timeSaved.unit}
             </dd>
           </div>
         </dl>
@@ -148,8 +149,8 @@ export function XRaySidebar({ scan, compact }: XRaySidebarProps) {
           est. reading time saved
         </p>
         <p className="mt-2 font-mono text-2xl font-semibold text-ink-dim">
-          {scan.readingTimeSavedMin}{' '}
-          <span className="text-base text-ink-faint">min</span>
+          {timeSaved.value}{' '}
+          <span className="text-base text-ink-faint">{timeSaved.unit}</span>
         </p>
         <dl className="mt-5 space-y-3 border-t border-line/70 pt-4 font-mono text-xs">
           <div className="flex items-center justify-between">

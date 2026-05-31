@@ -7,9 +7,8 @@ import { AppError } from "./errors";
 import { scrapeUrl } from "./scrape";
 import { analyzeParagraphs } from "./llm";
 import type { ModelOverrides } from "./llm/registry";
-import { countWords, MIN_TOTAL_WORDS } from "./utils";
+import { countWords, MIN_TOTAL_WORDS, WORDS_PER_MINUTE } from "./utils";
 
-const WORDS_PER_MINUTE = 230;
 const MAX_PARAGRAPHS = 80;
 
 export type AnalyzeInput = { url: string } | { text: string };
@@ -59,9 +58,12 @@ export async function analyze(
 
   let weightedDensity = 0;
   let slopWordCount = 0;
+  let fillerWords = 0;
   analysis.forEach((a, i) => {
-    weightedDensity += a.densityScore * wordsPerParagraph[i];
-    if (a.isSlop) slopWordCount += wordsPerParagraph[i];
+    const words = wordsPerParagraph[i];
+    weightedDensity += a.densityScore * words;
+    fillerWords += words * (1 - a.densityScore / 100);
+    if (a.isSlop) slopWordCount += words;
   });
 
   return {
@@ -70,7 +72,7 @@ export async function analyze(
     paragraphs: bounded,
     analysis,
     overallDensity: wordCount > 0 ? Math.round(weightedDensity / wordCount) : 0,
-    readingTimeSavedMin: Math.round((slopWordCount / WORDS_PER_MINUTE) * 10) / 10,
+    readingTimeSavedMin: Math.round((fillerWords / WORDS_PER_MINUTE) * 1000) / 1000,
     wordCount,
     slopWordCount,
     createdAt: new Date().toISOString(),

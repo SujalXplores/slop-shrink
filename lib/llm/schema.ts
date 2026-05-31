@@ -41,6 +41,7 @@ export const analysisEnvelopeSchema = z.object({
 export type AnalysisItem = z.infer<typeof analysisItemSchema>;
 export type AnalysisEnvelope = z.infer<typeof analysisEnvelopeSchema>;
 
+/** Compile-time assertion that the schema stays in sync with ParagraphAnalysis. */
 type _MatchesDomain = z.infer<typeof paragraphAnalysisSchema> extends ParagraphAnalysis
   ? ParagraphAnalysis extends z.infer<typeof paragraphAnalysisSchema>
   ? true

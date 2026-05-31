@@ -15,7 +15,7 @@ export interface XRayActions {
 export type XRayStore = XRayState & XRayActions;
 
 export const defaultXRayState: XRayState = {
-  xrayMode: false,
+  xrayMode: true,
   revealed: {},
 };
 

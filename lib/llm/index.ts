@@ -1,10 +1,16 @@
 import "server-only";
 
-import { generateObject, NoObjectGeneratedError, APICallError } from "ai";
+import {
+  generateText,
+  Output,
+  NoOutputGeneratedError,
+  APICallError,
+  type LanguageModel,
+} from "ai";
 
 import type { ParagraphAnalysis } from "../types";
 import { LlmError } from "../errors";
-import { analysisEnvelopeSchema } from "./schema";
+import { analysisEnvelopeSchema, type AnalysisItem } from "./schema";
 import { resolveModel, type ModelOverrides } from "./registry";
 
 const SYSTEM_PROMPT = `You are SlopShrink, an information-density analyzer. You are given the
@@ -28,15 +34,31 @@ For each paragraph, return an object with exactly these fields:
   short paragraph with one solid fact scores higher than a long paragraph of
   eloquent padding.
 
+  Calibration bands:
+    0–20   pure filler: clichés, hype, throat-clearing, restated generalities.
+    21–40  mostly filler with a stray weak detail.
+    41–60  mixed: a real point diluted by padding or vague framing.
+    61–80  mostly substance: specific claims with some connective filler.
+    81–100 dense: almost every sentence carries hard, verifiable information.
+
+  Examples:
+    "In today's fast-paced world, businesses must leverage synergy to win." → 5
+    "The update improves performance and users will appreciate the changes." → 35
+    "The team rewrote the parser, which they say cut load time noticeably." → 60
+    "Gemini 2.0 Flash processes 1M tokens at $0.10 per 1M input tokens, 87%
+     cheaper than the prior tier, and shipped on December 11, 2024." → 95
+
 - extractedFacts (array of strings): the concrete, verifiable facts, figures,
   dates, named entities, or actionable steps actually stated in the paragraph,
   each as a short standalone string. Include ONLY information present in the
   text, never infer, fabricate, or add outside knowledge. If the paragraph
   has none, return an empty array.
 
+- index (integer): echo back the [n] index shown before the paragraph, exactly.
+
 Rules:
-- Return exactly one result per input paragraph, in the same order. Do not
-  merge, split, skip, or reorder paragraphs.
+- Return exactly one result per input paragraph, each carrying its [n] index.
+  Do not merge, split, skip, or reorder paragraphs.
 - isSlop, densityScore, and extractedFacts must agree: a paragraph with real
   extractedFacts should not be slop and should score higher; an empty
   extractedFacts array with only generic language is slop.
@@ -44,6 +66,8 @@ Rules:
   length: polished, grammatical marketing/motivational/AI padding is still slop.`;
 
 const MAX_OUTPUT_TOKENS = 8192;
+const CHUNK_SIZE = 12;
+const MAX_CONCURRENCY = 4;
 
 export async function analyzeParagraphs(
   paragraphs: string[],
@@ -53,56 +77,123 @@ export async function analyzeParagraphs(
 
   const { model } = await resolveModel(overrides);
 
+  const chunks = chunk(paragraphs, CHUNK_SIZE);
+  const offsets: number[] = [];
+  let running = 0;
+  for (const c of chunks) {
+    offsets.push(running);
+    running += c.length;
+  }
+
+  const results = new Array<ParagraphAnalysis | undefined>(paragraphs.length);
+
+  await mapWithConcurrency(chunks, MAX_CONCURRENCY, async (chunkParas, ci) => {
+    const offset = offsets[ci];
+    const analyzed = await analyzeChunk(model, chunkParas);
+    for (let i = 0; i < chunkParas.length; i++) {
+      results[offset + i] = analyzed[i];
+    }
+  });
+
+  return paragraphs.map((_, i) => results[i] ?? fallbackAnalysis());
+}
+
+async function analyzeChunk(
+  model: LanguageModel,
+  paragraphs: string[],
+): Promise<ParagraphAnalysis[]> {
   const userPrompt =
-    "Analyze the following numbered paragraphs. Return exactly one result per paragraph, in order.\n\n" +
+    "Analyze the following numbered paragraphs. Return exactly one result per paragraph, echoing each [n] index.\n\n" +
     paragraphs.map((p, i) => `[${i + 1}] ${p}`).join("\n\n");
 
-  let results: ParagraphAnalysis[];
+  let items: AnalysisItem[];
   try {
-    const { object } = await generateObject({
+    const { output } = await generateText({
       model,
-      schema: analysisEnvelopeSchema,
-      schemaName: "ParagraphAnalysisBatch",
-      schemaDescription:
-        "Per-paragraph information-density analysis for an article.",
+      output: Output.object({
+        schema: analysisEnvelopeSchema,
+        name: "ParagraphAnalysisBatch",
+        description:
+          "Per-paragraph information-density analysis for an article.",
+      }),
       system: SYSTEM_PROMPT,
       prompt: userPrompt,
       temperature: 0,
       maxOutputTokens: MAX_OUTPUT_TOKENS,
       maxRetries: 2,
     });
-    results = object.results;
+    items = output.results;
   } catch (err) {
     throw toLlmError(err);
   }
 
-  const expected = paragraphs.length;
-  if (results.length !== expected) {
-    const drift = Math.abs(results.length - expected);
-    const tolerance = Math.max(2, Math.ceil(expected * 0.1));
-    if (drift > tolerance) {
-      throw new LlmError(
-        "length_mismatch",
-        `Model returned ${results.length} analyses for ${expected} paragraphs.`,
-        502,
-      );
+  return alignByIndex(items, paragraphs.length);
+}
+
+function alignByIndex(
+  items: AnalysisItem[],
+  expected: number,
+): ParagraphAnalysis[] {
+  const byIndex = new Map<number, AnalysisItem>();
+  items.forEach((item, i) => {
+    const idx = Number.isInteger(item.index) ? item.index - 1 : i;
+    if (idx >= 0 && idx < expected && !byIndex.has(idx)) {
+      byIndex.set(idx, item);
     }
+  });
+
+  if (byIndex.size < expected) {
     console.warn(
-      `[llm] reconciling paragraph-count drift: ${results.length} vs ${expected} (tolerance ${tolerance}).`,
+      `[llm] chunk returned ${byIndex.size} aligned analyses for ${expected} paragraphs.`,
     );
   }
 
-  return paragraphs.map((_, i) => {
-    const r = results[i];
-    if (!r) {
-      return { isSlop: false, densityScore: 50, extractedFacts: [] };
-    }
-    return {
-      isSlop: r.isSlop,
-      densityScore: Math.max(0, Math.min(100, Math.round(r.densityScore))),
-      extractedFacts: r.extractedFacts,
-    };
+  return Array.from({ length: expected }, (_, i) => {
+    const item = byIndex.get(i);
+    return item ? reconcile(item) : fallbackAnalysis();
   });
+}
+
+function reconcile(item: AnalysisItem): ParagraphAnalysis {
+  const facts = item.extractedFacts.map((f) => f.trim()).filter(Boolean);
+  let score = Math.max(0, Math.min(100, Math.round(item.densityScore)));
+  let isSlop = item.isSlop;
+
+  if (facts.length > 0) {
+    isSlop = false;
+    score = Math.max(score, 45);
+  } else if (score <= 20) {
+    isSlop = true;
+  }
+
+  return { isSlop, densityScore: score, extractedFacts: facts };
+}
+
+function fallbackAnalysis(): ParagraphAnalysis {
+  return { isSlop: false, densityScore: 50, extractedFacts: [] };
+}
+
+function chunk<T>(items: T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < items.length; i += size) {
+    out.push(items.slice(i, i + size));
+  }
+  return out;
+}
+
+async function mapWithConcurrency<T>(
+  items: T[],
+  limit: number,
+  worker: (item: T, index: number) => Promise<void>,
+): Promise<void> {
+  let cursor = 0;
+  const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (cursor < items.length) {
+      const current = cursor++;
+      await worker(items[current], current);
+    }
+  });
+  await Promise.all(runners);
 }
 
 function toLlmError(err: unknown): LlmError {
@@ -142,7 +233,7 @@ function toLlmError(err: unknown): LlmError {
     }
   }
 
-  const reason = NoObjectGeneratedError.isInstance(err)
+  const reason = NoOutputGeneratedError.isInstance(err)
     ? "the model did not return valid structured analysis"
     : "the language model request failed";
   return new LlmError("analysis_failed", `Analysis failed: ${reason}.`, 502, {

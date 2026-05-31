@@ -21,12 +21,24 @@ export const paragraphAnalysisSchema = z.object({
     ),
 });
 
-export const analysisEnvelopeSchema = z.object({
-  results: z
-    .array(paragraphAnalysisSchema)
-    .describe("One analysis object per input paragraph, in the same order."),
+export const analysisItemSchema = paragraphAnalysisSchema.extend({
+  index: z
+    .number()
+    .int()
+    .describe(
+      "1-based paragraph index, echoed exactly from the [n] label in the prompt.",
+    ),
 });
 
+export const analysisEnvelopeSchema = z.object({
+  results: z
+    .array(analysisItemSchema)
+    .describe(
+      "One analysis object per input paragraph; echo the [n] index for each.",
+    ),
+});
+
+export type AnalysisItem = z.infer<typeof analysisItemSchema>;
 export type AnalysisEnvelope = z.infer<typeof analysisEnvelopeSchema>;
 
 type _MatchesDomain = z.infer<typeof paragraphAnalysisSchema> extends ParagraphAnalysis

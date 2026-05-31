@@ -21,7 +21,7 @@ export const PROVIDERS: Record<ProviderId, ProviderMeta> = {
   openai: {
     id: "openai",
     label: "OpenAI",
-    lockedModel: "gpt-5.5-instant",
+    lockedModel: "gpt-5.4-mini",
     usesApiKey: true,
     keyUrl: "https://platform.openai.com/api-keys",
     keyPlaceholder: "sk-…",
@@ -29,7 +29,7 @@ export const PROVIDERS: Record<ProviderId, ProviderMeta> = {
   anthropic: {
     id: "anthropic",
     label: "Anthropic",
-    lockedModel: "claude-opus-4-7-20260512",
+    lockedModel: "claude-haiku-4-5",
     usesApiKey: true,
     keyUrl: "https://console.anthropic.com/settings/keys",
     keyPlaceholder: "sk-ant-…",
@@ -45,7 +45,7 @@ export const PROVIDERS: Record<ProviderId, ProviderMeta> = {
   openrouter: {
     id: "openrouter",
     label: "OpenRouter",
-    lockedModel: "openai/gpt-5.5",
+    lockedModel: "openai/gpt-5.4-mini",
     usesApiKey: true,
     keyUrl: "https://openrouter.ai/keys",
     keyPlaceholder: "sk-or-…",

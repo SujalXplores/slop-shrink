@@ -175,15 +175,17 @@ Here's what a scan result looks like — every paragraph scored, classified, and
   ┌──────────────┬─────────────────────────────┬───────┬─────────────────┐
   │  PROVIDER    │  LOCKED MODEL               │  BYOK │  LOCAL OPTION   │
   ├──────────────┼─────────────────────────────┼───────┼─────────────────┤
-  │  OpenAI      │  gpt-5.5-instant            │  ✓    │  —              │
-  │  Anthropic   │  claude-opus-4-7-20260512   │  ✓    │  —              │
+  │  OpenAI      │  gpt-5.4-mini               │  ✓    │  —              │
+  │  Anthropic   │  claude-haiku-4-5           │  ✓    │  —              │
   │  Google      │  gemini-3.5-flash           │  ✓    │  —              │
-  │  OpenRouter  │  openai/gpt-5.5              │  ✓    │  —              │
+  │  OpenRouter  │  openai/gpt-5.4-mini         │  ✓    │  —              │
   │  Ollama      │  llama3.3                   │  ✓    │  ✓  localhost   │
   └──────────────┴─────────────────────────────┴───────┴─────────────────┘
 
   All providers use structured output (JSON) with Zod v4 schema validation.
-  Models are locked to best-tier for optimal output quality.
+  Models are locked to each provider's cost-efficient workhorse tier: the
+  best balance of capability and price for high-volume structured analysis,
+  every one with first-class structured-output support.
 ```
 
 ---

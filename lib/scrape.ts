@@ -6,7 +6,7 @@ import { ScrapeError } from "./errors";
 import { countWords, MIN_TOTAL_WORDS } from "./utils";
 
 const USER_AGENT =
-  "SlopShrinkBot/0.2 (+https://slopshrink.app; information-density scanner)";
+  "SlopShrinkBot/0.2 (+https://slop-shrink.vercel.app; information-density scanner)";
 const FETCH_TIMEOUT_MS = 10_000;
 const MAX_REDIRECTS = 5;
 const MAX_BYTES = 2_000_000;

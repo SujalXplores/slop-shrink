@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/'],
     },
-    sitemap: 'https://slopshrink.vercel.app/sitemap.xml',
+    sitemap: 'https://slop-shrink.vercel.app/sitemap.xml',
   };
 }

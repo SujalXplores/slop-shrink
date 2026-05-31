@@ -28,7 +28,7 @@ const spectral = Spectral({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://slopshrink.vercel.app'),
+  metadataBase: new URL('https://slop-shrink.vercel.app'),
   title: {
     default: 'SlopShrink: X-ray your reading',
     template: '%s | SlopShrink',

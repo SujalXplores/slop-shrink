@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useByokStore } from '@/components/providers/byok-store-provider';
 import { PROVIDERS } from '@/lib/providers';
 import { openKeyModal } from '@/components/key-modal';
-import { countWords, MIN_TOTAL_WORDS } from '@/lib/utils';
+import { cn, countWords, MIN_TOTAL_WORDS } from '@/lib/utils';
 import { byokHeaders } from '@/lib/byok';
 
 type Mode = 'url' | 'text';
@@ -128,11 +128,12 @@ export function InputHero() {
                     setMode(m);
                     setError(null);
                   }}
-                  className={`cursor-pointer rounded-md px-3.5 py-1.5 font-mono text-xs uppercase tracking-[0.18em] transition-colors ${
+                  className={cn(
+                    'cursor-pointer rounded-md px-3.5 py-1.5 font-mono text-xs uppercase tracking-[0.18em] transition-colors',
                     mode === m
                       ? 'bg-panel-2 text-signal ring-glow-signal'
-                      : 'text-ink-faint hover:text-ink-dim'
-                  }`}
+                      : 'text-ink-faint hover:text-ink-dim',
+                  )}
                 >
                   {m}
                 </button>
@@ -216,11 +217,11 @@ export function InputHero() {
             >
               {loading ? 'x-raying' : 'run x-ray'}
               <span
-                className={
+                className={cn(
                   loading
                     ? 'caret-blink'
-                    : 'transition-transform group-enabled:group-hover:translate-x-0.5'
-                }
+                    : 'transition-transform group-enabled:group-hover:translate-x-0.5',
+                )}
               >
                 {loading ? '…' : '▸'}
               </span>

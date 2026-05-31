@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'motion/react';
 import { useXRayStore } from '@/components/providers/xray-store-provider';
-import { densityTier } from '@/lib/utils';
+import { cn, densityTier } from '@/lib/utils';
 import type { ScanResult } from '@/lib/types';
 
 const BAR_FILL = { high: 'bg-signal', mid: 'bg-warn', low: 'bg-slop' } as const;
@@ -41,10 +41,10 @@ export function XRayArticle({ scan }: XRayArticleProps) {
           <div key={i} className="group/p relative">
             <div className="absolute bottom-0 left-0 top-0 w-1 overflow-hidden rounded-full">
               <div
-                className={`h-full w-full transition-colors duration-300 ${BAR_TRACK[tier]}`}
+                className={cn('h-full w-full transition-colors duration-300', BAR_TRACK[tier])}
               />
               <div
-                className={`absolute bottom-0 left-0 w-full rounded-full transition-all duration-500 ${BAR_FILL[tier]}`}
+                className={cn('absolute bottom-0 left-0 w-full rounded-full transition-all duration-500', BAR_FILL[tier])}
                 style={{
                   height: `${Math.max(analysis.densityScore, 8)}%`,
                 }}
@@ -67,18 +67,16 @@ export function XRayArticle({ scan }: XRayArticleProps) {
               >
                 {xrayMode && (
                   <span
-                    className={`mb-1.5 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.18em] ${TIER_TEXT[tier]}`}
+                    className={cn('mb-1.5 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.18em]', TIER_TEXT[tier])}
                   >
                     <span
-                      className={`h-1 w-1 rounded-full ${BAR_FILL[tier]}`}
+                      className={cn('h-1 w-1 rounded-full', BAR_FILL[tier])}
                     />
                     {tier} density · {analysis.densityScore}
                   </span>
                 )}
                 <p
-                  className={`font-read text-[15px] leading-relaxed transition-colors duration-300 ${
-                    xrayMode && isSlop ? 'text-ink-faint' : 'text-ink'
-                  }`}
+                  className={cn('font-read text-[15px] leading-relaxed transition-colors duration-300', xrayMode && isSlop ? 'text-ink-faint' : 'text-ink')}
                 >
                   {paragraph}
                 </p>

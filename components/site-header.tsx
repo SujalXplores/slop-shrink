@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useByokStore } from '@/components/providers/byok-store-provider';
 import { KeyModal, openKeyModal } from '@/components/key-modal';
+import { cn } from '@/lib/utils';
 
 export function SiteHeader() {
   const hasKey = useByokStore((s) => !!s.apiKey || !!s.baseURL);
@@ -33,11 +34,9 @@ export function SiteHeader() {
               title="Configure API key"
             >
               <span
-                className={`h-1.5 w-1.5 rounded-full ${
-                  hasKey ? 'bg-signal' : 'bg-slop'
-                }`}
+                className={cn('h-1.5 w-1.5 rounded-full', hasKey ? 'bg-signal' : 'bg-slop')}
               />
-              <span className={hasKey ? 'text-signal-dim' : 'text-slop-dim'}>
+              <span className={cn(hasKey ? 'text-signal-dim' : 'text-slop-dim')}>
                 {hasKey ? 'key set' : 'no key'}
               </span>
             </button>

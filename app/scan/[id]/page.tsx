@@ -5,6 +5,7 @@ import { XRayToggle } from '@/components/xray-toggle';
 import { XRayArticle } from '@/components/xray-article';
 import { XRaySidebar } from '@/components/xray-sidebar';
 import { getScan } from '@/lib/storage';
+import { cn } from '@/lib/utils';
 
 export async function generateMetadata({
   params,
@@ -145,9 +146,7 @@ export default async function ScanPage({
                   ].map(([kind, w], i) => (
                     <div key={i} className="flex gap-3">
                       <span
-                        className={`mt-1 h-full w-0.5 shrink-0 rounded-full ${
-                          kind === 'signal' ? 'bg-signal/60' : 'bg-slop/60'
-                        }`}
+                        className={cn('mt-1 h-full w-0.5 shrink-0 rounded-full', kind === 'signal' ? 'bg-signal/60' : 'bg-slop/60')}
                       />
                       <span
                         className="skeleton-pulse h-3.5 rounded bg-panel-2"

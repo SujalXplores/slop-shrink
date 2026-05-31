@@ -11,6 +11,11 @@ const BAR_TRACK = {
   mid: 'bg-warn/40',
   low: 'bg-slop/40',
 } as const;
+const TIER_TEXT = {
+  high: 'text-signal-dim',
+  mid: 'text-warn',
+  low: 'text-slop-dim',
+} as const;
 
 interface XRayArticleProps {
   scan: ScanResult;
@@ -22,7 +27,7 @@ export function XRayArticle({ scan }: XRayArticleProps) {
   const revealParagraph = useXRayStore((s) => s.revealParagraph);
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-5">
       {scan.paragraphs.map((paragraph, i) => {
         const analysis = scan.analysis[i];
         if (!analysis) return null;
@@ -33,20 +38,20 @@ export function XRayArticle({ scan }: XRayArticleProps) {
         const tier = densityTier(analysis.densityScore);
 
         return (
-          <div key={i} className="relative">
-            <div className="absolute left-0 top-0 bottom-0 w-0.5">
+          <div key={i} className="group/p relative">
+            <div className="absolute bottom-0 left-0 top-0 w-1 overflow-hidden rounded-full">
               <div
-                className={`h-full rounded-full transition-colors duration-300 ${BAR_TRACK[tier]}`}
+                className={`h-full w-full transition-colors duration-300 ${BAR_TRACK[tier]}`}
               />
               <div
-                className={`absolute top-0 left-0 w-full rounded-full transition-all duration-500 ${BAR_FILL[tier]}`}
+                className={`absolute bottom-0 left-0 w-full rounded-full transition-all duration-500 ${BAR_FILL[tier]}`}
                 style={{
                   height: `${Math.max(analysis.densityScore, 8)}%`,
                 }}
               />
             </div>
 
-            <div className="pl-4">
+            <div className="pl-5">
               <motion.div
                 layout
                 initial={false}
@@ -60,6 +65,16 @@ export function XRayArticle({ scan }: XRayArticleProps) {
                 }}
                 className="overflow-hidden"
               >
+                {xrayMode && (
+                  <span
+                    className={`mb-1.5 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.18em] ${TIER_TEXT[tier]}`}
+                  >
+                    <span
+                      className={`h-1 w-1 rounded-full ${BAR_FILL[tier]}`}
+                    />
+                    {tier} density · {analysis.densityScore}
+                  </span>
+                )}
                 <p
                   className={`font-read text-[15px] leading-relaxed transition-colors duration-300 ${
                     xrayMode && isSlop ? 'text-ink-faint' : 'text-ink'

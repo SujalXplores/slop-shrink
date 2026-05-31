@@ -13,8 +13,10 @@ export function XRayToggle() {
         onClick={toggleXray}
         aria-pressed={xrayMode}
         title="Toggle X-Ray mode"
-        className={`glass group flex cursor-pointer items-center gap-2 rounded-full py-2 pl-2.5 pr-3 transition-all duration-300 sm:gap-3 sm:py-2.5 sm:pl-3 sm:pr-4 ${
-          xrayMode ? 'ring-glow-signal' : ''
+        className={`group flex cursor-pointer items-center gap-2 rounded-full border py-2 pl-2.5 pr-3 backdrop-blur-xl transition-all duration-300 sm:gap-3 sm:py-2.5 sm:pl-3 sm:pr-4 ${
+          xrayMode
+            ? 'border-signal/50 bg-panel ring-glow-signal'
+            : 'border-line-bright bg-panel shadow-[0_18px_50px_-18px_rgba(0,0,0,0.9)] hover:border-line-bright hover:bg-panel-2'
         }`}
       >
         <span

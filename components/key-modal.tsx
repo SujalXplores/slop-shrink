@@ -51,7 +51,7 @@ export function KeyModal() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         showCloseButton={false}
-        className="border-line bg-panel p-0 shadow-2xl sm:max-w-md"
+        className="overflow-hidden border border-line bg-panel p-0 shadow-2xl ring-0 sm:max-w-md"
       >
         <div className="flex items-center justify-between border-b border-line px-6 py-4">
           <DialogHeader className="gap-0.5">
@@ -141,20 +141,40 @@ export function KeyModal() {
                   ))}
                 </SelectContent>
               </Select>
-            </Field>
-
-            <Field>
-              <FieldLabel className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
-                Locked Model
-              </FieldLabel>
-              <div className="flex h-9 items-center rounded-lg border border-line bg-panel-2 px-3">
-                <span className="font-mono text-sm text-ink-dim">
+              <div className="mt-2 flex items-center gap-2 font-mono text-[10px] tracking-[0.04em] text-ink-faint">
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 14 14"
+                  fill="none"
+                  className="shrink-0 text-signal-dim"
+                >
+                  <rect
+                    x="2.5"
+                    y="6"
+                    width="9"
+                    height="6"
+                    rx="1.4"
+                    stroke="currentColor"
+                    strokeWidth="1.2"
+                  />
+                  <path
+                    d="M4.5 6V4.5a2.5 2.5 0 0 1 5 0V6"
+                    stroke="currentColor"
+                    strokeWidth="1.2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <span className="uppercase tracking-[0.14em] text-ink-faint">
+                  model
+                </span>
+                <span className="font-semibold text-ink-dim">
                   {meta.lockedModel}
                 </span>
+                <span className="ml-auto text-ink-faint/70">
+                  best-tier · auto
+                </span>
               </div>
-              <p className="mt-1.5 font-mono text-[10px] tracking-[0.04em] text-ink-faint">
-                Best-tier model selected for optimal output
-              </p>
             </Field>
 
             {meta.usesApiKey ? (

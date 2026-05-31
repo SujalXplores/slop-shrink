@@ -60,11 +60,55 @@ export default async function ScanPage({
           <article className="lg:col-span-8">
             {scan ? (
               <div className="font-read text-ink">
-                {scan.source.title && (
-                  <h1 className="mb-6 font-read text-xl font-light leading-snug text-ink sm:text-2xl">
-                    {scan.source.title}
-                  </h1>
-                )}
+                <header className="mb-7 border-b border-line/70 pb-6">
+                  <div className="mb-3 flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+                    <span className="rounded-md bg-panel-2 px-2 py-0.5 text-ink-dim">
+                      {scan.source.type === 'url'
+                        ? 'web article'
+                        : 'pasted text'}
+                    </span>
+                    <span className="text-line-bright">·</span>
+                    <span>{scan.wordCount.toLocaleString()} words</span>
+                    {scan.source.url && (
+                      <>
+                        <span className="text-line-bright">·</span>
+                        <a
+                          href={scan.source.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="cursor-pointer truncate text-signal-dim transition-colors hover:text-signal"
+                        >
+                          source ↗
+                        </a>
+                      </>
+                    )}
+                  </div>
+                  {scan.source.title && (
+                    <h1 className="font-read text-2xl font-light leading-snug text-ink sm:text-3xl">
+                      {scan.source.title}
+                    </h1>
+                  )}
+                </header>
+
+                <div className="mb-6 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-line/70 bg-panel/40 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.14em] text-ink-faint">
+                  <span className="text-ink-dim">density</span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-1 rounded-full bg-signal" />
+                    high
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-1 rounded-full bg-warn" />
+                    mid
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-1 rounded-full bg-slop" />
+                    slop
+                  </span>
+                  <span className="ml-auto hidden text-ink-faint/70 normal-case tracking-[0.04em] sm:inline">
+                    toggle x-ray to collapse slop ↘
+                  </span>
+                </div>
+
                 <XRayArticle scan={scan} />
               </div>
             ) : (
@@ -79,7 +123,8 @@ export default async function ScanPage({
                     </p>
                     <p className="mt-2 max-w-sm font-read text-[15px] leading-relaxed text-ink-faint">
                       This is where your x-rayed article will appear: facts
-                      spotlighted, slop ready to collapse. Run a scan to fill it.
+                      spotlighted, slop ready to collapse. Run a scan to fill
+                      it.
                     </p>
                   </div>
                   <Link

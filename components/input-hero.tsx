@@ -84,19 +84,6 @@ export function InputHero() {
 
   return (
     <section className="relative">
-      <div
-        className="animate-rise mb-7 flex items-center gap-3"
-        style={{ '--rise-delay': '40ms' } as React.CSSProperties}
-      >
-        <span className="font-mono text-[11px] uppercase tracking-[0.32em] text-signal-dim">
-          {'// information-density scanner'}
-        </span>
-        <span className="h-px flex-1 bg-gradient-to-r from-line to-transparent" />
-        <span className="font-mono text-[11px] tracking-[0.2em] text-ink-faint">
-          v0.1
-        </span>
-      </div>
-
       <h1
         className="animate-rise font-read text-[clamp(2.6rem,6vw,4.6rem)] font-light leading-[0.98] tracking-tight text-ink"
         style={{ '--rise-delay': '120ms' } as React.CSSProperties}

@@ -237,12 +237,28 @@
     opacity: 0.45;
   }
 }
+@keyframes status-pulse {
+  0% {
+    box-shadow: 0 0 0 0
+      color-mix(in oklch, var(--color-signal) 55%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 5px
+      color-mix(in oklch, var(--color-signal) 0%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--color-signal) 0%, transparent);
+  }
+}
 
 .caret-blink {
   animation: blink 1.1s step-end infinite;
 }
 .skeleton-pulse {
   animation: pulse-soft 1.6s ease-in-out infinite;
+}
+.status-pulse {
+  animation: status-pulse 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

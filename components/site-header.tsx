@@ -43,10 +43,7 @@ export function SiteHeader() {
             </button>
             <span className="hidden h-3 w-px bg-line sm:inline" />
             <span className="hidden items-center gap-1.5 sm:flex">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal opacity-60" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-signal" />
-              </span>
+              <span className="status-pulse block h-1.5 w-1.5 shrink-0 rounded-full bg-signal" />
               <span className="text-signal-dim">online</span>
             </span>
           </div>

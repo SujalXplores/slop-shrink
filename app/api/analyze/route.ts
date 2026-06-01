@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 import { analyze, type AnalyzeInput } from "@/lib/analyze";
-import { saveScan } from "@/lib/storage";
 import { AppError } from "@/lib/errors";
 import { isProviderId } from "@/lib/providers";
 import { readByokHeaders } from "@/lib/byok";
@@ -39,8 +38,10 @@ export async function POST(request: Request): Promise<Response> {
   try {
     const overrides = extractOverrides(request);
     const result = await analyze(parsed.data as AnalyzeInput, overrides);
-    saveScan(result);
-    return Response.json({ id: result.id }, { status: 201 });
+    // Scans are persisted client-side (sessionStorage) rather than in server
+    // memory, which does not survive across serverless instances/invocations.
+    // Return the full result so the browser can store it and render /scan/[id].
+    return Response.json({ scan: result }, { status: 201 });
   } catch (err) {
     if (err instanceof AppError) {
       return Response.json(

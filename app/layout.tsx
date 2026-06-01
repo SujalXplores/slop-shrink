@@ -4,6 +4,7 @@ import { MotionConfig } from 'motion/react';
 import './globals.css';
 import { XRayStoreProvider } from '@/components/providers/xray-store-provider';
 import { ByokStoreProvider } from '@/components/providers/byok-store-provider';
+import { ScanStoreProvider } from '@/components/providers/scan-store-provider';
 
 const plexSans = IBM_Plex_Sans({
   variable: '--font-plex-sans',
@@ -80,7 +81,9 @@ export default function RootLayout({
         <div className="atmosphere" aria-hidden="true" />
         <MotionConfig reducedMotion="user">
           <XRayStoreProvider>
-            <ByokStoreProvider>{children}</ByokStoreProvider>
+            <ByokStoreProvider>
+              <ScanStoreProvider>{children}</ScanStoreProvider>
+            </ByokStoreProvider>
           </XRayStoreProvider>
         </MotionConfig>
       </body>

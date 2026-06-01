@@ -3,10 +3,12 @@
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useByokStore } from '@/components/providers/byok-store-provider';
+import { useScanStore } from '@/components/providers/scan-store-provider';
 import { PROVIDERS } from '@/lib/providers';
 import { openKeyModal } from '@/components/key-modal';
 import { cn, countWords, MIN_TOTAL_WORDS } from '@/lib/utils';
 import { byokHeaders } from '@/lib/byok';
+import type { ScanResult } from '@/lib/types';
 
 type Mode = 'url' | 'text';
 
@@ -34,6 +36,8 @@ export function InputHero() {
   const byokProvider = useByokStore((s) => s.provider);
   const byokApiKey = useByokStore((s) => s.apiKey);
   const byokBaseURL = useByokStore((s) => s.baseURL);
+
+  const saveScan = useScanStore((s) => s.saveScan);
 
   const words = useMemo(() => countWords(text), [text]);
   const urlOk = useMemo(() => isValidHttpUrl(url), [url]);
@@ -67,13 +71,14 @@ export function InputHero() {
         body: JSON.stringify(body),
       });
       const data = (await res.json().catch(() => null)) as {
-        id?: string;
+        scan?: ScanResult;
         message?: string;
       } | null;
-      if (!res.ok || !data?.id) {
+      if (!res.ok || !data?.scan) {
         throw new Error(data?.message ?? 'Analysis failed. Please try again.');
       }
-      router.push(`/scan/${data.id}`);
+      saveScan(data.scan);
+      router.push(`/scan/${data.scan.id}`);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Something went wrong. Try again.',

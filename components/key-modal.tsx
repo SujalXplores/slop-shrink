@@ -1,27 +1,28 @@
 'use client';
 
+import { ExternalLink } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+
 import { useByokStore } from '@/components/providers/byok-store-provider';
-import { PROVIDER_LIST, PROVIDERS, type ProviderId } from '@/lib/providers';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-  DialogClose,
 } from '@/components/ui/dialog';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { ExternalLink } from 'lucide-react';
+import { PROVIDER_LIST, PROVIDERS, type ProviderId } from '@/lib/providers';
 
 export function KeyModal() {
   const [open, setOpen] = useState(false);
@@ -52,14 +53,14 @@ export function KeyModal() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         showCloseButton={false}
-        className="overflow-hidden border-2 border-ink bg-panel p-0 shadow-print ring-0 sm:max-w-md"
+        className="border-ink bg-panel shadow-print overflow-hidden border-2 p-0 ring-0 sm:max-w-md"
       >
-        <div className="flex items-center justify-between border-b-2 border-ink px-6 py-4">
+        <div className="border-ink flex items-center justify-between border-b-2 px-6 py-4">
           <DialogHeader className="gap-0.5">
-            <DialogTitle className="font-display text-lg font-semibold tracking-tight text-ink">
+            <DialogTitle className="font-display text-ink text-lg font-semibold tracking-tight">
               Press credentials
             </DialogTitle>
-            <DialogDescription className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-faint">
+            <DialogDescription className="text-ink-faint font-mono text-[10px] tracking-[0.14em] uppercase">
               bring your own key
             </DialogDescription>
           </DialogHeader>
@@ -68,7 +69,7 @@ export function KeyModal() {
               <button
                 type="button"
                 aria-label="Close"
-                className="cursor-pointer flex h-8 w-8 items-center justify-center rounded-sm text-ink-faint transition-colors hover:bg-panel-2 hover:text-slop"
+                className="text-ink-faint hover:bg-panel-2 hover:text-slop flex h-8 w-8 cursor-pointer items-center justify-center rounded-sm transition-colors"
               />
             }
           >
@@ -88,13 +89,13 @@ export function KeyModal() {
 
         <div className="px-6 py-5">
           <FieldGroup>
-            <div className="flex items-start gap-3 rounded-lg border border-signal/20 bg-signal/5 px-3.5 py-3">
+            <div className="border-signal/20 bg-signal/5 flex items-start gap-3 rounded-lg border px-3.5 py-3">
               <svg
                 width="14"
                 height="14"
                 viewBox="0 0 14 14"
                 fill="none"
-                className="mt-0.5 shrink-0 text-signal"
+                className="text-signal mt-0.5 shrink-0"
               >
                 <path
                   d="M7 1L2 3.5v3.5c0 3.5 2.5 5.5 5 6.5 2.5-1 5-3 5-6.5V3.5L7 1z"
@@ -111,14 +112,14 @@ export function KeyModal() {
                   strokeLinejoin="round"
                 />
               </svg>
-              <p className="font-mono text-[10px] leading-relaxed text-signal-dim">
-                Your key stays in this browser, is sent only to run your scan,
-                and is never stored on our servers. Cleared when the tab closes.
+              <p className="text-signal-dim font-mono text-[10px] leading-relaxed">
+                Your key stays in this browser, is sent only to run your scan, and is never stored
+                on our servers. Cleared when the tab closes.
               </p>
             </div>
 
             <Field>
-              <FieldLabel className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+              <FieldLabel className="text-ink-faint font-mono text-[10px] tracking-[0.18em] uppercase">
                 Provider
               </FieldLabel>
               <Select
@@ -127,7 +128,7 @@ export function KeyModal() {
                   setProvider(v as ProviderId);
                 }}
               >
-                <SelectTrigger className="h-9 w-full border-line bg-panel-2 pl-3 text-left font-mono text-sm text-ink">
+                <SelectTrigger className="border-line bg-panel-2 text-ink h-9 w-full pl-3 text-left font-mono text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="border-line bg-panel-2 shadow-xl">
@@ -135,20 +136,20 @@ export function KeyModal() {
                     <SelectItem
                       key={p.id}
                       value={p.id}
-                      className="font-mono text-sm text-ink focus:bg-signal/10 focus:text-signal"
+                      className="text-ink focus:bg-signal/10 focus:text-signal font-mono text-sm"
                     >
                       {p.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <div className="mt-2 flex items-center gap-2 font-mono text-[10px] tracking-[0.04em] text-ink-faint">
+              <div className="text-ink-faint mt-2 flex items-center gap-2 font-mono text-[10px] tracking-[0.04em]">
                 <svg
                   width="11"
                   height="11"
                   viewBox="0 0 14 14"
                   fill="none"
-                  className="shrink-0 text-signal-dim"
+                  className="text-signal-dim shrink-0"
                 >
                   <rect
                     x="2.5"
@@ -166,22 +167,16 @@ export function KeyModal() {
                     strokeLinecap="round"
                   />
                 </svg>
-                <span className="uppercase tracking-[0.14em] text-ink-faint">
-                  model
-                </span>
-                <span className="font-semibold text-ink-dim">
-                  {meta.lockedModel}
-                </span>
-                <span className="ml-auto text-ink-faint/70">
-                  best-tier · auto
-                </span>
+                <span className="text-ink-faint tracking-[0.14em] uppercase">model</span>
+                <span className="text-ink-dim font-semibold">{meta.lockedModel}</span>
+                <span className="text-ink-faint/70 ml-auto">best-tier · auto</span>
               </div>
             </Field>
 
             {meta.usesApiKey ? (
               <Field>
                 <div className="flex items-center justify-between">
-                  <FieldLabel className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+                  <FieldLabel className="text-ink-faint font-mono text-[10px] tracking-[0.18em] uppercase">
                     API Key
                   </FieldLabel>
                   {meta.keyUrl && (
@@ -189,7 +184,7 @@ export function KeyModal() {
                       href={meta.keyUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex cursor-pointer items-center gap-1 font-mono text-[9px] text-signal-dim transition-colors hover:text-signal"
+                      className="text-signal-dim hover:text-signal inline-flex cursor-pointer items-center gap-1 font-mono text-[9px] transition-colors"
                     >
                       get key
                       <ExternalLink className="size-2.5" aria-hidden="true" />
@@ -204,12 +199,12 @@ export function KeyModal() {
                     placeholder={meta.keyPlaceholder}
                     autoComplete="off"
                     spellCheck={false}
-                    className="h-9 border-line bg-panel-2 pr-16 font-mono text-sm text-ink placeholder:text-ink-faint/40"
+                    className="border-line bg-panel-2 text-ink placeholder:text-ink-faint/40 h-9 pr-16 font-mono text-sm"
                   />
                   <button
                     type="button"
                     onClick={() => setShowKey(!showKey)}
-                    className="cursor-pointer absolute right-1 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-faint transition-colors hover:bg-panel hover:text-ink-dim"
+                    className="text-ink-faint hover:bg-panel hover:text-ink-dim absolute top-1/2 right-1 -translate-y-1/2 cursor-pointer rounded-md px-2 py-1 font-mono text-[10px] tracking-[0.1em] uppercase transition-colors"
                   >
                     {showKey ? 'hide' : 'show'}
                   </button>
@@ -217,7 +212,7 @@ export function KeyModal() {
               </Field>
             ) : (
               <Field>
-                <FieldLabel className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+                <FieldLabel className="text-ink-faint font-mono text-[10px] tracking-[0.18em] uppercase">
                   Base URL
                 </FieldLabel>
                 <Input
@@ -225,25 +220,25 @@ export function KeyModal() {
                   value={baseURL}
                   onChange={(e) => setBaseURL(e.target.value)}
                   placeholder={meta.keyPlaceholder}
-                  className="h-9 border-line bg-panel-2 font-mono text-sm text-ink placeholder:text-ink-faint/40"
+                  className="border-line bg-panel-2 text-ink placeholder:text-ink-faint/40 h-9 font-mono text-sm"
                 />
               </Field>
             )}
           </FieldGroup>
         </div>
 
-        <div className="flex items-center justify-between border-t-2 border-ink px-6 py-4">
+        <div className="border-ink flex items-center justify-between border-t-2 px-6 py-4">
           <Button
             type="button"
             variant="outline"
             onClick={handleClear}
-            className="h-8 rounded-sm border-line-bright bg-transparent font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:border-slop hover:bg-slop/5 hover:text-slop"
+            className="border-line-bright text-ink-faint hover:border-slop hover:bg-slop/5 hover:text-slop h-8 rounded-sm bg-transparent font-mono text-[11px] tracking-[0.14em] uppercase"
           >
             Clear Key
           </Button>
           <DialogClose
             render={
-              <Button className="h-8 rounded-sm bg-ink px-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-void shadow-print-sm transition-transform hover:-translate-y-px" />
+              <Button className="bg-ink text-void shadow-print-sm h-8 rounded-sm px-4 font-mono text-xs font-bold tracking-[0.18em] uppercase transition-transform hover:-translate-y-px" />
             }
           >
             Save &amp; Close

@@ -1,21 +1,18 @@
 'use client';
 
-import * as React from 'react';
 import { Autocomplete as AutocompletePrimitive } from '@base-ui/react/autocomplete';
+import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
 const Autocomplete = AutocompletePrimitive.Root;
 
-function AutocompleteInput({
-  className,
-  ...props
-}: AutocompletePrimitive.Input.Props) {
+function AutocompleteInput({ className, ...props }: AutocompletePrimitive.Input.Props) {
   return (
     <AutocompletePrimitive.Input
       data-slot="autocomplete-input"
       className={cn(
-        'h-9 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50',
+        'border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full min-w-0 rounded-lg border bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:ring-3 disabled:cursor-not-allowed disabled:opacity-50',
         className,
       )}
       {...props}
@@ -33,14 +30,11 @@ function AutocompleteContent({
 }) {
   return (
     <AutocompletePrimitive.Portal>
-      <AutocompletePrimitive.Positioner
-        sideOffset={sideOffset}
-        className="isolate z-[60]"
-      >
+      <AutocompletePrimitive.Positioner sideOffset={sideOffset} className="isolate z-[60]">
         <AutocompletePrimitive.Popup
           data-slot="autocomplete-content"
           className={cn(
-            'max-h-[min(18rem,var(--available-height))] w-(--anchor-width) origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg p-1 shadow-md ring-1 ring-foreground/10 duration-100 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
+            'ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 max-h-[min(18rem,var(--available-height))] w-(--anchor-width) origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg p-1 shadow-md ring-1 duration-100',
             className,
           )}
           {...props}
@@ -52,23 +46,16 @@ function AutocompleteContent({
   );
 }
 
-function AutocompleteList(
-  props: React.ComponentProps<typeof AutocompletePrimitive.List>,
-) {
-  return (
-    <AutocompletePrimitive.List data-slot="autocomplete-list" {...props} />
-  );
+function AutocompleteList(props: React.ComponentProps<typeof AutocompletePrimitive.List>) {
+  return <AutocompletePrimitive.List data-slot="autocomplete-list" {...props} />;
 }
 
-function AutocompleteItem({
-  className,
-  ...props
-}: AutocompletePrimitive.Item.Props) {
+function AutocompleteItem({ className, ...props }: AutocompletePrimitive.Item.Props) {
   return (
     <AutocompletePrimitive.Item
       data-slot="autocomplete-item"
       className={cn(
-        'relative flex w-full cursor-default items-center rounded-md px-2 py-1.5 text-sm outline-none select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground',
+        'data-highlighted:bg-accent data-highlighted:text-accent-foreground relative flex w-full cursor-default items-center rounded-md px-2 py-1.5 text-sm outline-none select-none',
         className,
       )}
       {...props}
@@ -76,15 +63,12 @@ function AutocompleteItem({
   );
 }
 
-function AutocompleteEmpty({
-  className,
-  ...props
-}: AutocompletePrimitive.Empty.Props) {
+function AutocompleteEmpty({ className, ...props }: AutocompletePrimitive.Empty.Props) {
   return (
     <AutocompletePrimitive.Empty
       data-slot="autocomplete-empty"
       className={cn(
-        'px-2 py-2 text-center text-xs text-muted-foreground empty:m-0 empty:p-0',
+        'text-muted-foreground px-2 py-2 text-center text-xs empty:m-0 empty:p-0',
         className,
       )}
       {...props}
@@ -94,9 +78,9 @@ function AutocompleteEmpty({
 
 export {
   Autocomplete,
-  AutocompleteInput,
   AutocompleteContent,
-  AutocompleteList,
-  AutocompleteItem,
   AutocompleteEmpty,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteList,
 };

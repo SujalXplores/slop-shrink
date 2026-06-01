@@ -1,6 +1,7 @@
-import { createStore } from "zustand/vanilla";
-import { persist } from "zustand/middleware";
-import type { ProviderId } from "./providers";
+import { STORAGE_KEYS } from './stores/keys';
+import { createSessionStore, type PersistedCreator } from './stores/session-store';
+
+import type { ProviderId } from './providers';
 
 export interface ByokState {
   provider: ProviderId;
@@ -19,36 +20,18 @@ export interface ByokActions {
 export type ByokStore = ByokState & ByokActions;
 
 export const defaultByokState: ByokState = {
-  provider: "openai",
-  apiKey: "",
-  baseURL: "",
+  provider: 'openai',
+  apiKey: '',
+  baseURL: '',
 };
 
-export const createByokStore = (init: ByokState = defaultByokState) =>
-  createStore<ByokStore>()(
-    persist(
-      (set) => ({
-        ...init,
-        setProvider: (p) => set({ provider: p }),
-        setApiKey: (k) => set({ apiKey: k }),
-        setBaseURL: (u) => set({ baseURL: u }),
-        setCredentials: (c) => set(c),
-        clearCredentials: () => set({ apiKey: "", baseURL: "" }),
-      }),
-      {
-        name: "slopshrink-byok",
-        storage: {
-          getItem: (name) => {
-            const raw = sessionStorage.getItem(name);
-            return raw ? (JSON.parse(raw) as { state: ByokState }) : null;
-          },
-          setItem: (name, value) => {
-            sessionStorage.setItem(name, JSON.stringify(value));
-          },
-          removeItem: (name) => {
-            sessionStorage.removeItem(name);
-          },
-        },
-      },
-    ),
-  );
+const creator: PersistedCreator<ByokStore> = (set) => ({
+  ...defaultByokState,
+  setProvider: (p) => set({ provider: p }),
+  setApiKey: (k) => set({ apiKey: k }),
+  setBaseURL: (u) => set({ baseURL: u }),
+  setCredentials: (c) => set(c),
+  clearCredentials: () => set({ apiKey: '', baseURL: '' }),
+});
+
+export const createByokStore = () => createSessionStore({ name: STORAGE_KEYS.byok, creator });

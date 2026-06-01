@@ -1,10 +1,4 @@
-export const PROVIDER_IDS = [
-  "openai",
-  "anthropic",
-  "google",
-  "openrouter",
-  "ollama",
-] as const;
+export const PROVIDER_IDS = ['openai', 'anthropic', 'google', 'openrouter', 'ollama'] as const;
 
 export type ProviderId = (typeof PROVIDER_IDS)[number];
 
@@ -19,49 +13,47 @@ export interface ProviderMeta {
 
 export const PROVIDERS: Record<ProviderId, ProviderMeta> = {
   openai: {
-    id: "openai",
-    label: "OpenAI",
-    lockedModel: "gpt-5.4-mini",
+    id: 'openai',
+    label: 'OpenAI',
+    lockedModel: 'gpt-5.4-mini',
     usesApiKey: true,
-    keyUrl: "https://platform.openai.com/api-keys",
-    keyPlaceholder: "sk-…",
+    keyUrl: 'https://platform.openai.com/api-keys',
+    keyPlaceholder: 'sk-…',
   },
   anthropic: {
-    id: "anthropic",
-    label: "Anthropic",
-    lockedModel: "claude-haiku-4-5",
+    id: 'anthropic',
+    label: 'Anthropic',
+    lockedModel: 'claude-haiku-4-5',
     usesApiKey: true,
-    keyUrl: "https://console.anthropic.com/settings/keys",
-    keyPlaceholder: "sk-ant-…",
+    keyUrl: 'https://console.anthropic.com/settings/keys',
+    keyPlaceholder: 'sk-ant-…',
   },
   google: {
-    id: "google",
-    label: "Google Gemini",
-    lockedModel: "gemini-3.5-flash",
+    id: 'google',
+    label: 'Google Gemini',
+    lockedModel: 'gemini-3.5-flash',
     usesApiKey: true,
-    keyUrl: "https://aistudio.google.com/app/apikey",
-    keyPlaceholder: "AIza…",
+    keyUrl: 'https://aistudio.google.com/app/apikey',
+    keyPlaceholder: 'AIza…',
   },
   openrouter: {
-    id: "openrouter",
-    label: "OpenRouter",
-    lockedModel: "openai/gpt-5.4-mini",
+    id: 'openrouter',
+    label: 'OpenRouter',
+    lockedModel: 'openai/gpt-5.4-mini',
     usesApiKey: true,
-    keyUrl: "https://openrouter.ai/keys",
-    keyPlaceholder: "sk-or-…",
+    keyUrl: 'https://openrouter.ai/keys',
+    keyPlaceholder: 'sk-or-…',
   },
   ollama: {
-    id: "ollama",
-    label: "Ollama (local)",
-    lockedModel: "llama3.3",
+    id: 'ollama',
+    label: 'Ollama (local)',
+    lockedModel: 'llama3.3',
     usesApiKey: false,
-    keyPlaceholder: "http://127.0.0.1:11434/api",
+    keyPlaceholder: 'http://127.0.0.1:11434/api',
   },
 };
 
-export const PROVIDER_LIST: ProviderMeta[] = PROVIDER_IDS.map(
-  (id) => PROVIDERS[id],
-);
+export const PROVIDER_LIST: ProviderMeta[] = PROVIDER_IDS.map((id) => PROVIDERS[id]);
 
 export function isProviderId(value: string): value is ProviderId {
   return (PROVIDER_IDS as readonly string[]).includes(value);

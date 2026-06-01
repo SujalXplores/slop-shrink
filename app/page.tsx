@@ -1,34 +1,14 @@
-import { SiteHeader } from '@/components/site-header';
-import { InputHero } from '@/components/input-hero';
 import {
-  Reframe,
-  Specimen,
   AccuracyLedger,
   ByTheNumbers,
-  ProviderRoster,
   Colophon,
-} from '@/components/home-sections';
-
-const STEPS = [
-  {
-    n: '01',
-    mark: '§',
-    title: 'Scan',
-    body: 'Fetch the URL and parse it with Cheerio (or take your raw text), then split it into clean paragraphs.',
-  },
-  {
-    n: '02',
-    mark: '¶',
-    title: 'Score',
-    body: "The editor rates each paragraph's information density and pulls the hard facts, numbers, and steps.",
-  },
-  {
-    n: '03',
-    mark: '✎',
-    title: 'Shrink',
-    body: 'Flip X-Ray mode to strike the slop from the page and spotlight only the lines that earn their ink.',
-  },
-];
+  ProviderRoster,
+  Reframe,
+  Specimen,
+} from '@/components/home';
+import { InputHero } from '@/components/input-hero';
+import { SiteHeader } from '@/components/site-header';
+import { STEPS } from '@/lib/home-data';
 
 export default function Home() {
   return (
@@ -42,41 +22,39 @@ export default function Home() {
 
         <section
           aria-label="How it works"
-          className="border-t-[3px] border-double border-ink py-12"
+          className="border-ink border-t-[3px] border-double py-12"
         >
           <div className="mb-8 flex items-baseline justify-between gap-4">
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-ink">
+            <h2 className="font-display text-ink text-3xl font-semibold tracking-tight">
               The house style
             </h2>
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+            <span className="text-ink-faint font-mono text-[10px] tracking-[0.2em] uppercase">
               three&nbsp;marks &middot; one&nbsp;pass
             </span>
           </div>
 
-          <div className="grid gap-px overflow-hidden rounded-sm border border-line-bright bg-line-bright sm:grid-cols-3">
+          <div className="border-line-bright bg-line-bright grid gap-px overflow-hidden rounded-sm border sm:grid-cols-3">
             {STEPS.map((step, i) => (
               <div
                 key={step.n}
-                className="animate-rise group relative bg-panel p-5 transition-colors hover:bg-void sm:p-6"
-                style={
-                  { '--rise-delay': `${440 + i * 90}ms` } as React.CSSProperties
-                }
+                className="animate-rise group bg-panel hover:bg-void relative p-5 transition-colors sm:p-6"
+                style={{ '--rise-delay': `${440 + i * 90}ms` } as React.CSSProperties}
               >
                 <span
                   aria-hidden="true"
-                  className="absolute right-4 top-3 font-display text-4xl font-light text-line-bright transition-colors group-hover:text-slop/35"
+                  className="font-display text-line-bright group-hover:text-slop/35 absolute top-3 right-4 text-4xl font-light transition-colors"
                 >
                   {step.mark}
                 </span>
                 <div className="flex items-baseline gap-3">
-                  <span className="font-mono text-xs font-bold tracking-[0.2em] text-slop">
+                  <span className="text-slop font-mono text-xs font-bold tracking-[0.2em]">
                     {step.n}
                   </span>
-                  <h3 className="font-mono text-sm font-bold uppercase tracking-[0.2em] text-ink">
+                  <h3 className="text-ink font-mono text-sm font-bold tracking-[0.2em] uppercase">
                     {step.title}
                   </h3>
                 </div>
-                <p className="mt-3 max-w-[34ch] font-sans text-[15px] leading-relaxed text-ink-dim">
+                <p className="text-ink-dim mt-3 max-w-[34ch] font-sans text-[15px] leading-relaxed">
                   {step.body}
                 </p>
               </div>
@@ -92,8 +70,8 @@ export default function Home() {
         <Colophon />
       </main>
 
-      <footer className="border-t-[3px] border-double border-ink">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-5 py-6 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint sm:flex-row">
+      <footer className="border-ink border-t-[3px] border-double">
+        <div className="text-ink-faint mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-5 py-6 font-mono text-[10px] tracking-[0.2em] uppercase sm:flex-row">
           <span>slopshrink &middot; the density gazette</span>
           <span className="text-ink-dim">read less. learn more.</span>
         </div>

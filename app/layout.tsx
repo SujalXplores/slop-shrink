@@ -1,13 +1,13 @@
-import type { Metadata, Viewport } from 'next';
-import { Bodoni_Moda, Geist, Geist_Mono } from 'next/font/google';
 import { MotionConfig } from 'motion/react';
+import { Bodoni_Moda, Geist, Geist_Mono } from 'next/font/google';
+
 import './globals.css';
-import { XRayStoreProvider } from '@/components/providers/xray-store-provider';
 import { ByokStoreProvider } from '@/components/providers/byok-store-provider';
 import { ScanStoreProvider } from '@/components/providers/scan-store-provider';
+import { XRayStoreProvider } from '@/components/providers/xray-store-provider';
 
-// Bodoni Moda — a dramatic high-contrast Didone for the masthead, headlines,
-// figures, and short italic editorial accents.
+import type { Metadata, Viewport } from 'next';
+
 const bodoni = Bodoni_Moda({
   variable: '--font-bodoni',
   subsets: ['latin'],
@@ -16,7 +16,6 @@ const bodoni = Bodoni_Moda({
   display: 'swap',
 });
 
-// Geist — the single text face: body copy and all small UI text.
 const geist = Geist({
   variable: '--font-geist',
   subsets: ['latin'],
@@ -24,7 +23,6 @@ const geist = Geist({
   display: 'swap',
 });
 
-// Geist Mono — Geist's matching monospace for labels, stamps, and stats.
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
@@ -73,14 +71,9 @@ export const viewport: Viewport = {
   themeColor: '#f1e9d8',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${bodoni.variable} ${geist.variable} ${geistMono.variable}`}
-    >
+    <html lang="en" className={`${bodoni.variable} ${geist.variable} ${geistMono.variable}`}>
       <body className="min-h-dvh font-sans antialiased">
         <div className="atmosphere" aria-hidden="true" />
         <MotionConfig reducedMotion="user">

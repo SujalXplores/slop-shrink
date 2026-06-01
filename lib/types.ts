@@ -1,4 +1,4 @@
-export type SourceType = "url" | "text";
+export type SourceType = 'url' | 'text';
 
 export interface ParagraphAnalysis {
   isSlop: boolean;

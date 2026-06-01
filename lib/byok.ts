@@ -1,7 +1,7 @@
 export const BYOK_HEADERS = {
-  provider: "x-llm-provider",
-  apiKey: "x-llm-key",
-  baseURL: "x-llm-base-url",
+  provider: 'x-llm-provider',
+  apiKey: 'x-llm-key',
+  baseURL: 'x-llm-base-url',
 } as const;
 
 export interface ByokCredentials {

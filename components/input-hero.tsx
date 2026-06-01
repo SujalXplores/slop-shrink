@@ -1,14 +1,16 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { AlertTriangle, Loader2, Pencil, ScanLine } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Pencil, Loader2, ScanLine, AlertTriangle } from 'lucide-react';
+import { useMemo, useState } from 'react';
+
+import { openKeyModal } from '@/components/key-modal';
 import { useByokStore } from '@/components/providers/byok-store-provider';
 import { useScanStore } from '@/components/providers/scan-store-provider';
-import { PROVIDERS } from '@/lib/providers';
-import { openKeyModal } from '@/components/key-modal';
-import { cn, countWords, MIN_TOTAL_WORDS } from '@/lib/utils';
 import { byokHeaders } from '@/lib/byok';
+import { PROVIDERS } from '@/lib/providers';
+import { MIN_TOTAL_WORDS, cn, countWords } from '@/lib/utils';
+
 import type { ScanResult } from '@/lib/types';
 
 type Mode = 'url' | 'text';
@@ -37,7 +39,6 @@ export function InputHero() {
   const byokProvider = useByokStore((s) => s.provider);
   const byokApiKey = useByokStore((s) => s.apiKey);
   const byokBaseURL = useByokStore((s) => s.baseURL);
-
   const saveScan = useScanStore((s) => s.saveScan);
 
   const words = useMemo(() => countWords(text), [text]);
@@ -81,9 +82,7 @@ export function InputHero() {
       saveScan(data.scan);
       router.push(`/scan/${data.scan.id}`);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Something went wrong. Try again.',
-      );
+      setError(err instanceof Error ? err.message : 'Something went wrong. Try again.');
       setLoading(false);
     }
   }
@@ -91,29 +90,29 @@ export function InputHero() {
   return (
     <section className="relative">
       <p
-        className="animate-rise mb-5 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.28em] text-ink-faint"
+        className="animate-rise text-ink-faint mb-5 flex items-center gap-3 font-mono text-[11px] tracking-[0.28em] uppercase"
         style={{ '--rise-delay': '60ms' } as React.CSSProperties}
       >
-        <span className="h-px w-8 bg-slop" />
+        <span className="bg-slop h-px w-8" />
         Information density desk
       </p>
 
       <h1
-        className="animate-rise font-display text-[clamp(2.7rem,7vw,5.4rem)] font-light leading-[0.96] tracking-tight text-ink"
+        className="animate-rise font-display text-ink text-[clamp(2.7rem,7vw,5.4rem)] leading-[0.96] font-light tracking-tight"
         style={{ '--rise-delay': '120ms' } as React.CSSProperties}
       >
         Most of what
         <br className="hidden sm:block" /> you read is{' '}
-        <em className="pen-strike font-semibold not-italic text-slop">slop</em>.
+        <em className="pen-strike text-slop font-semibold not-italic">slop</em>.
       </h1>
 
       <p
-        className="animate-rise mt-7 max-w-xl border-l-2 border-slop pl-4 font-sans text-lg leading-relaxed text-ink-dim"
+        className="animate-rise border-slop text-ink-dim mt-7 max-w-xl border-l-2 pl-4 font-sans text-lg leading-relaxed"
         style={{ '--rise-delay': '220ms' } as React.CSSProperties}
       >
-        Submit a URL or raw text. SlopShrink reads every paragraph like a ruthless
-        editor &mdash; scoring information density, striking the filler, and
-        marking up the facts, numbers, and steps worth keeping.
+        Submit a URL or raw text. SlopShrink reads every paragraph like a ruthless editor &mdash;
+        scoring information density, striking the filler, and marking up the facts, numbers, and
+        steps worth keeping.
       </p>
 
       <form
@@ -121,12 +120,12 @@ export function InputHero() {
         className="animate-rise scan-sweep glass mt-10 rounded-sm p-2"
         style={{ '--rise-delay': '320ms' } as React.CSSProperties}
       >
-        <div className="relative z-10 border border-dashed border-line-bright bg-void/40 p-4 sm:p-6">
+        <div className="border-line-bright bg-void/40 relative z-10 border border-dashed p-4 sm:p-6">
           <div className="mb-4 flex items-center justify-between gap-4">
             <div
               role="tablist"
               aria-label="Input mode"
-              className="inline-flex overflow-hidden rounded-sm border border-ink"
+              className="border-ink inline-flex overflow-hidden rounded-sm border"
             >
               {(['url', 'text'] as const).map((m) => (
                 <button
@@ -139,10 +138,8 @@ export function InputHero() {
                     setError(null);
                   }}
                   className={cn(
-                    'cursor-pointer px-4 py-1.5 font-mono text-xs font-bold uppercase tracking-[0.2em] transition-colors',
-                    mode === m
-                      ? 'bg-ink text-void'
-                      : 'bg-panel text-ink-faint hover:text-ink',
+                    'cursor-pointer px-4 py-1.5 font-mono text-xs font-bold tracking-[0.2em] uppercase transition-colors',
+                    mode === m ? 'bg-ink text-void' : 'bg-panel text-ink-faint hover:text-ink',
                   )}
                 >
                   {m}
@@ -150,7 +147,7 @@ export function InputHero() {
               ))}
             </div>
 
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+            <span className="text-ink-faint font-mono text-[10px] tracking-[0.18em] uppercase">
               {mode === 'url'
                 ? urlOk
                   ? 'target locked'
@@ -174,7 +171,7 @@ export function InputHero() {
               }}
               placeholder="https://example.com/the-article-to-mark-up"
               aria-label="Article URL"
-              className="w-full bg-transparent font-mono text-sm text-ink placeholder:text-ink-faint/60 focus:outline-none sm:text-base"
+              className="text-ink placeholder:text-ink-faint/60 w-full bg-transparent font-mono text-sm focus:outline-none sm:text-base"
             />
           ) : (
             <textarea
@@ -186,13 +183,13 @@ export function InputHero() {
               rows={6}
               placeholder="Paste the copy you suspect is mostly padding…"
               aria-label="Raw text"
-              className="w-full resize-none bg-transparent font-sans text-base leading-relaxed text-ink placeholder:text-ink-faint/60 focus:outline-none"
+              className="text-ink placeholder:text-ink-faint/60 w-full resize-none bg-transparent font-sans text-base leading-relaxed focus:outline-none"
             />
           )}
 
-          <div className="mt-5 flex flex-col gap-3 border-t border-line-bright pt-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+          <div className="border-line-bright mt-5 flex flex-col gap-3 border-t pt-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+              <span className="text-ink-faint font-mono text-[10px] tracking-[0.18em] uppercase">
                 proofs:
               </span>
               <button
@@ -202,7 +199,7 @@ export function InputHero() {
                   setUrl(EXAMPLE_URL);
                   setError(null);
                 }}
-                className="cursor-pointer rounded-sm border border-line-bright bg-panel px-2.5 py-1 font-mono text-[11px] text-ink-dim transition-colors hover:border-ink hover:text-ink"
+                className="border-line-bright bg-panel text-ink-dim hover:border-ink hover:text-ink cursor-pointer rounded-sm border px-2.5 py-1 font-mono text-[11px] transition-colors"
               >
                 a wikipedia article
               </button>
@@ -213,7 +210,7 @@ export function InputHero() {
                   setText(EXAMPLE_TEXT);
                   setError(null);
                 }}
-                className="cursor-pointer rounded-sm border border-line-bright bg-panel px-2.5 py-1 font-mono text-[11px] text-ink-dim transition-colors hover:border-slop hover:text-slop"
+                className="border-line-bright bg-panel text-ink-dim hover:border-slop hover:text-slop cursor-pointer rounded-sm border px-2.5 py-1 font-mono text-[11px] transition-colors"
               >
                 a slop sample
               </button>
@@ -223,7 +220,7 @@ export function InputHero() {
               type="submit"
               disabled={!canSubmit || loading}
               aria-busy={loading}
-              className="group inline-flex cursor-pointer items-center justify-center gap-2 rounded-sm bg-slop px-6 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-void transition-all enabled:shadow-print-sm enabled:hover:-translate-y-px enabled:active:translate-y-0 enabled:active:shadow-none disabled:cursor-not-allowed disabled:bg-panel-2 disabled:text-ink-faint"
+              className="group bg-slop text-void enabled:shadow-print-sm disabled:bg-panel-2 disabled:text-ink-faint inline-flex cursor-pointer items-center justify-center gap-2 rounded-sm px-6 py-2.5 font-mono text-xs font-bold tracking-[0.2em] uppercase transition-all enabled:hover:-translate-y-px enabled:active:translate-y-0 enabled:active:shadow-none disabled:cursor-not-allowed"
             >
               {loading ? 'marking up' : 'mark it up'}
               {loading ? (
@@ -240,20 +237,14 @@ export function InputHero() {
       </form>
 
       {loading && (
-        <p
-          className="mt-4 flex items-center gap-2 font-mono text-xs text-ink-faint"
-          role="status"
-        >
-          <ScanLine className="size-3.5 animate-pulse text-slop" aria-hidden="true" />
+        <p className="text-ink-faint mt-4 flex items-center gap-2 font-mono text-xs" role="status">
+          <ScanLine className="text-slop size-3.5 animate-pulse" aria-hidden="true" />
           marking up every paragraph for information density
           <span className="caret-blink text-slop">_</span>
         </p>
       )}
       {error && !loading && (
-        <p
-          className="mt-4 flex items-center gap-2 font-mono text-xs text-slop"
-          role="alert"
-        >
+        <p className="text-slop mt-4 flex items-center gap-2 font-mono text-xs" role="alert">
           <AlertTriangle className="size-3.5 shrink-0" aria-hidden="true" />
           {error}
         </p>

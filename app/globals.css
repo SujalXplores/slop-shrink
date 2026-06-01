@@ -1,13 +1,9 @@
 @import 'tailwindcss';
-@plugin "tailwindcss-animate";
+@plugin 'tailwindcss-animate';
 
-/* Light, paper-based editorial theme. No `.dark` class on <html>, so any
-   `dark:` utilities in primitives intentionally no-op. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* --- paper & ink ---------------------------------------------------- */
-  /* "void" = the desk/paper base, kept named so existing utilities map. */
   --color-void: oklch(0.955 0.015 79);
   --color-panel: oklch(0.992 0.006 86);
   --color-panel-2: oklch(0.924 0.019 76);
@@ -18,17 +14,12 @@
   --color-ink-dim: oklch(0.42 0.021 56);
   --color-ink-faint: oklch(0.565 0.024 60);
 
-  /* --- editorial accents --------------------------------------------- */
-  /* signal = "kept / dense / verified" pine-green ink */
   --color-signal: oklch(0.5 0.11 158);
   --color-signal-dim: oklch(0.45 0.1 160);
-  /* warn = "trim" ochre highlighter */
   --color-warn: oklch(0.61 0.12 72);
-  /* slop = "cut" — the red editor's pen */
   --color-slop: oklch(0.55 0.2 28);
   --color-slop-dim: oklch(0.5 0.18 29);
 
-  /* Sharper, paper-like corners across the board. */
   --radius-sm: 0.125rem;
   --radius-md: 0.25rem;
   --radius-lg: 0.3rem;
@@ -36,9 +27,7 @@
   --radius-2xl: 0.55rem;
 }
 
-/* `inline` so var() values resolve against next/font variables, not :root. */
 @theme inline {
-  /* Two families only: Bodoni Moda (display) + Geist / Geist Mono (text). */
   --font-display: var(--font-bodoni), 'Didot', Georgia, 'Times New Roman', serif;
   --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, 'SF Mono', Menlo, monospace;
@@ -68,7 +57,9 @@
   html {
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
-    font-feature-settings: 'liga' 1, 'kern' 1;
+    font-feature-settings:
+      'liga' 1,
+      'kern' 1;
   }
   body {
     background-color: var(--color-void);
@@ -77,13 +68,11 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  /* v4 border utilities default to currentColor; pin a hairline instead. */
   *,
   ::before,
   ::after {
     border-color: var(--color-line);
   }
-  /* highlighter-pen selection */
   ::selection {
     background-color: color-mix(in oklch, var(--color-warn) 42%, transparent);
     color: var(--color-ink);
@@ -111,9 +100,6 @@
   }
 }
 
-/* ===================================================================== */
-/*  Atmosphere — printed writing paper: warmth, ruled lines, grain       */
-/* ===================================================================== */
 .atmosphere {
   position: fixed;
   inset: 0;
@@ -132,7 +118,6 @@
     ),
     var(--color-void);
 }
-/* faint ruled-paper lines */
 .atmosphere::before {
   content: '';
   position: absolute;
@@ -144,15 +129,10 @@
     color-mix(in oklch, var(--color-line) 55%, transparent) 37px,
     color-mix(in oklch, var(--color-line) 55%, transparent) 38px
   );
-  -webkit-mask-image: radial-gradient(
-    96% 80% at 50% 26%,
-    #000 30%,
-    transparent 90%
-  );
+  -webkit-mask-image: radial-gradient(96% 80% at 50% 26%, #000 30%, transparent 90%);
   mask-image: radial-gradient(96% 80% at 50% 26%, #000 30%, transparent 90%);
   opacity: 0.4;
 }
-/* paper grain */
 .atmosphere::after {
   content: '';
   position: absolute;
@@ -162,11 +142,6 @@
   mix-blend-mode: multiply;
 }
 
-/* ===================================================================== */
-/*  Surface utilities                                                    */
-/* ===================================================================== */
-
-/* A printed sheet: solid paper, hairline border, hard offset ink shadow. */
 @utility glass {
   background: var(--color-panel);
   border: 1px solid var(--color-line-bright);
@@ -177,7 +152,6 @@
   border: 1px solid var(--color-line);
 }
 
-/* hard "printed" offset shadow + tactile press on hover */
 @utility shadow-print {
   box-shadow: 4px 4px 0 0 var(--color-ink);
 }
@@ -188,7 +162,6 @@
   box-shadow: 4px 4px 0 0 var(--color-slop);
 }
 
-/* rubber-stamp chip */
 @utility stamp {
   display: inline-flex;
   align-items: center;
@@ -203,7 +176,6 @@
   line-height: 1;
 }
 
-/* legacy glow utilities, repurposed as restrained letterpress */
 @utility text-glow-signal {
   text-shadow: 0 1px 0 color-mix(in oklch, var(--color-void) 70%, transparent);
 }
@@ -214,7 +186,6 @@
   box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-signal) 34%, transparent);
 }
 
-/* highlighter sweep (used on the input sheet) */
 @utility scan-sweep {
   position: relative;
   overflow: hidden;
@@ -239,7 +210,6 @@
   animation-delay: var(--rise-delay, 0ms);
 }
 
-/* red-pen strike-through that draws on load */
 @utility pen-strike {
   position: relative;
   white-space: nowrap;
@@ -260,7 +230,6 @@
   box-shadow: 0 0.04em 0 color-mix(in oklch, var(--color-slop) 35%, transparent);
 }
 
-/* dotted leader line for report rows */
 @utility leader {
   flex: 1 1 auto;
   margin: 0 0.5rem;

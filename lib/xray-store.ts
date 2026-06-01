@@ -1,4 +1,4 @@
-import { createStore } from "zustand/vanilla";
+import { createStore as createVanillaStore } from 'zustand/vanilla';
 
 export interface XRayState {
   xrayMode: boolean;
@@ -19,12 +19,11 @@ export const defaultXRayState: XRayState = {
   revealed: {},
 };
 
-export const createXRayStore = (init: XRayState = defaultXRayState) =>
-  createStore<XRayStore>()((set) => ({
-    ...init,
+export const createXRayStore = () =>
+  createVanillaStore<XRayStore>()((set) => ({
+    ...defaultXRayState,
     toggleXray: () => set((s) => ({ xrayMode: !s.xrayMode, revealed: {} })),
     setXrayMode: (on) => set({ xrayMode: on, revealed: {} }),
-    revealParagraph: (index) =>
-      set((s) => ({ revealed: { ...s.revealed, [index]: true } })),
+    revealParagraph: (index) => set((s) => ({ revealed: { ...s.revealed, [index]: true } })),
     resetReveals: () => set({ revealed: {} }),
   }));

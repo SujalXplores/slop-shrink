@@ -21,6 +21,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { ExternalLink } from 'lucide-react';
 
 export function KeyModal() {
   const [open, setOpen] = useState(false);
@@ -51,12 +52,12 @@ export function KeyModal() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         showCloseButton={false}
-        className="overflow-hidden border border-line bg-panel p-0 shadow-2xl ring-0 sm:max-w-md"
+        className="overflow-hidden border-2 border-ink bg-panel p-0 shadow-print ring-0 sm:max-w-md"
       >
-        <div className="flex items-center justify-between border-b border-line px-6 py-4">
+        <div className="flex items-center justify-between border-b-2 border-ink px-6 py-4">
           <DialogHeader className="gap-0.5">
-            <DialogTitle className="font-mono text-sm font-semibold uppercase tracking-[0.18em] text-ink">
-              API Key
+            <DialogTitle className="font-display text-lg font-semibold tracking-tight text-ink">
+              Press credentials
             </DialogTitle>
             <DialogDescription className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-faint">
               bring your own key
@@ -67,7 +68,7 @@ export function KeyModal() {
               <button
                 type="button"
                 aria-label="Close"
-                className="cursor-pointer flex h-8 w-8 items-center justify-center rounded-lg text-ink-faint transition-colors hover:bg-panel-2 hover:text-ink"
+                className="cursor-pointer flex h-8 w-8 items-center justify-center rounded-sm text-ink-faint transition-colors hover:bg-panel-2 hover:text-slop"
               />
             }
           >
@@ -188,9 +189,10 @@ export function KeyModal() {
                       href={meta.keyUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="cursor-pointer font-mono text-[9px] text-signal-dim transition-colors hover:text-signal"
+                      className="inline-flex cursor-pointer items-center gap-1 font-mono text-[9px] text-signal-dim transition-colors hover:text-signal"
                     >
-                      get key ↗
+                      get key
+                      <ExternalLink className="size-2.5" aria-hidden="true" />
                     </a>
                   )}
                 </div>
@@ -230,21 +232,21 @@ export function KeyModal() {
           </FieldGroup>
         </div>
 
-        <div className="flex items-center justify-between border-t border-line px-6 py-4">
+        <div className="flex items-center justify-between border-t-2 border-ink px-6 py-4">
           <Button
             type="button"
             variant="outline"
             onClick={handleClear}
-            className="h-8 border-line bg-transparent font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:border-slop/50 hover:bg-slop/5 hover:text-slop"
+            className="h-8 rounded-sm border-line-bright bg-transparent font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:border-slop hover:bg-slop/5 hover:text-slop"
           >
             Clear Key
           </Button>
           <DialogClose
             render={
-              <Button className="h-8 bg-signal px-4 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-void hover:brightness-110" />
+              <Button className="h-8 rounded-sm bg-ink px-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-void shadow-print-sm transition-transform hover:-translate-y-px" />
             }
           >
-            Save & Close
+            Save &amp; Close
           </DialogClose>
         </div>
       </DialogContent>

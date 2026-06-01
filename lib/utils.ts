@@ -21,6 +21,28 @@ export function densityTier(score: number): DensityTier {
   return "low";
 }
 
+export interface TierDistribution {
+  /** kept — high density */
+  high: number;
+  /** trim — mid density */
+  mid: number;
+  /** cut — low density */
+  low: number;
+  total: number;
+}
+
+/** Tallies how many paragraphs land in each density tier (keep / trim / cut). */
+export function tierDistribution(scores: number[]): TierDistribution {
+  const dist: TierDistribution = { high: 0, mid: 0, low: 0, total: scores.length };
+  for (const score of scores) dist[densityTier(score)] += 1;
+  return dist;
+}
+
+/** Whole-number percentage of `value` against `total`, guarding divide-by-zero. */
+export function percent(value: number, total: number): number {
+  return total > 0 ? Math.round((value / total) * 100) : 0;
+}
+
 export const WORDS_PER_MINUTE = 230;
 
 /** Formats minutes saved as seconds under a minute, half-minutes below ten, whole minutes above. */

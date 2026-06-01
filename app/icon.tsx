@@ -16,26 +16,15 @@ export default function Icon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#161825',
+          backgroundColor: '#f1e9d8',
+          color: '#b23a2e',
+          fontFamily: 'Georgia, serif',
+          fontSize: 26,
+          fontWeight: 700,
+          paddingBottom: 2,
         }}
       >
-        <svg
-          viewBox="0 0 32 32"
-          width="24"
-          height="24"
-          fill="none"
-          stroke="#57d98a"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="16" cy="16" r="10" />
-          <circle cx="16" cy="16" r="4" />
-          <line x1="16" y1="2" x2="16" y2="6" />
-          <line x1="16" y1="26" x2="16" y2="30" />
-          <line x1="2" y1="16" x2="6" y2="16" />
-          <line x1="26" y1="16" x2="30" y2="16" />
-        </svg>
+        ¶
       </div>
     ),
     {

@@ -10,47 +10,50 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-line/80 bg-void/70 backdrop-blur-xl">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5">
-          <Link href="/" className="group flex items-center gap-2.5">
+      <header className="sticky top-0 z-40 border-b-[3px] border-double border-ink bg-void/85 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
+          <Link href="/" className="group flex items-baseline gap-2.5">
             <span
               aria-hidden="true"
-              className="text-lg leading-none transition-transform duration-300 group-hover:rotate-6"
+              className="font-display text-2xl font-black leading-none text-slop transition-transform duration-300 group-hover:-rotate-6"
             >
-              🩻
+              ¶
             </span>
-            <span className="font-mono text-sm font-semibold tracking-[0.18em] text-ink">
-              SLOP<span className="text-signal text-glow-signal">SHRINK</span>
+            <span className="font-display text-xl font-semibold tracking-tight text-ink">
+              Slop<span className="italic text-slop">shrink</span>
+            </span>
+            <span className="hidden font-mono text-[9px] uppercase tracking-[0.22em] text-ink-faint sm:inline">
+              the&nbsp;density&nbsp;gazette
             </span>
           </Link>
 
-          <div className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
-            <span className="hidden sm:inline">density&nbsp;engine</span>
-            <span className="hidden h-3 w-px bg-line sm:inline" />
+          <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint sm:gap-4">
             <button
               type="button"
               onClick={openKeyModal}
-              className="cursor-pointer flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:bg-panel-2"
+              className="flex cursor-pointer items-center gap-1.5 rounded-sm border border-line-bright bg-panel px-2 py-1 transition-colors hover:border-ink hover:text-ink"
               title="Configure API key"
             >
               <span
-                className={cn('h-1.5 w-1.5 rounded-full', hasKey ? 'bg-signal' : 'bg-slop')}
+                className={cn(
+                  'h-1.5 w-1.5 rounded-full',
+                  hasKey ? 'bg-signal' : 'bg-slop',
+                )}
               />
               <span className={cn(hasKey ? 'text-signal-dim' : 'text-slop-dim')}>
                 {hasKey ? 'key set' : 'no key'}
               </span>
             </button>
-            <span className="hidden h-3 w-px bg-line sm:inline" />
             <span className="hidden items-center gap-1.5 sm:flex">
               <span className="status-pulse block h-1.5 w-1.5 shrink-0 rounded-full bg-signal" />
-              <span className="text-signal-dim">online</span>
+              <span className="text-signal-dim">on&nbsp;press</span>
             </span>
-            <span className="h-3 w-px bg-line" />
+            <span className="hidden h-3.5 w-px bg-line-bright sm:inline" />
             <a
               href="https://github.com/SujalXplores/slop-shrink"
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:bg-panel-2 hover:text-ink"
+              className="flex items-center gap-1.5 rounded-sm px-1.5 py-1 transition-colors hover:text-ink"
               title="View source on GitHub"
             >
               <svg

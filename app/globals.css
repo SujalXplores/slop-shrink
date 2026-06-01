@@ -1,40 +1,52 @@
 @import 'tailwindcss';
 @plugin "tailwindcss-animate";
 
-/* Keep `.dark` live on <html> and override v4's default prefers-color-scheme. */
+/* Light, paper-based editorial theme. No `.dark` class on <html>, so any
+   `dark:` utilities in primitives intentionally no-op. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-void: oklch(0.145 0.012 256);
-  --color-panel: oklch(0.188 0.014 256);
-  --color-panel-2: oklch(0.228 0.016 256);
-  --color-line: oklch(0.32 0.018 256);
-  --color-line-bright: oklch(0.43 0.021 256);
+  /* --- paper & ink ---------------------------------------------------- */
+  /* "void" = the desk/paper base, kept named so existing utilities map. */
+  --color-void: oklch(0.955 0.015 79);
+  --color-panel: oklch(0.992 0.006 86);
+  --color-panel-2: oklch(0.924 0.019 76);
+  --color-line: oklch(0.84 0.022 73);
+  --color-line-bright: oklch(0.7 0.028 67);
 
-  --color-ink: oklch(0.93 0.012 250);
-  --color-ink-dim: oklch(0.74 0.014 256);
-  --color-ink-faint: oklch(0.55 0.016 256);
+  --color-ink: oklch(0.235 0.018 54);
+  --color-ink-dim: oklch(0.42 0.021 56);
+  --color-ink-faint: oklch(0.565 0.024 60);
 
-  --color-signal: oklch(0.87 0.23 148);
-  --color-signal-dim: oklch(0.72 0.16 150);
-  --color-warn: oklch(0.84 0.16 84);
-  --color-slop: oklch(0.68 0.21 24);
-  --color-slop-dim: oklch(0.57 0.16 24);
+  /* --- editorial accents --------------------------------------------- */
+  /* signal = "kept / dense / verified" pine-green ink */
+  --color-signal: oklch(0.5 0.11 158);
+  --color-signal-dim: oklch(0.45 0.1 160);
+  /* warn = "trim" ochre highlighter */
+  --color-warn: oklch(0.61 0.12 72);
+  /* slop = "cut" — the red editor's pen */
+  --color-slop: oklch(0.55 0.2 28);
+  --color-slop-dim: oklch(0.5 0.18 29);
 
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
+  /* Sharper, paper-like corners across the board. */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.3rem;
+  --radius-xl: 0.4rem;
+  --radius-2xl: 0.55rem;
 }
 
 /* `inline` so var() values resolve against next/font variables, not :root. */
 @theme inline {
-  --font-mono: var(--font-plex-mono), ui-monospace, 'SF Mono', Menlo, monospace;
-  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-read: var(--font-spectral), Georgia, 'Times New Roman', serif;
+  /* Two families only: Bodoni Moda (display) + Geist / Geist Mono (text). */
+  --font-display: var(--font-bodoni), 'Didot', Georgia, 'Times New Roman', serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, 'SF Mono', Menlo, monospace;
 }
 
 @layer base {
   :root {
-    color-scheme: dark;
+    color-scheme: light;
     --background: var(--color-void);
     --foreground: var(--color-ink);
     --popover: var(--color-panel);
@@ -44,24 +56,24 @@
     --border: var(--color-line);
     --input: var(--color-line);
     --ring: var(--color-signal);
-    --primary: var(--color-signal);
+    --primary: var(--color-ink);
     --primary-foreground: var(--color-void);
     --secondary: var(--color-panel-2);
     --secondary-foreground: var(--color-ink);
     --accent: var(--color-panel-2);
     --accent-foreground: var(--color-ink);
     --destructive: var(--color-slop);
-    --destructive-foreground: var(--color-ink);
-    --radius-md: 0.5rem;
+    --destructive-foreground: var(--color-void);
   }
   html {
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
+    font-feature-settings: 'liga' 1, 'kern' 1;
   }
   body {
     background-color: var(--color-void);
     color: var(--color-ink);
-    font-family: var(--font-sans);
+    font-family: var(--font-read);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -71,8 +83,9 @@
   ::after {
     border-color: var(--color-line);
   }
+  /* highlighter-pen selection */
   ::selection {
-    background-color: color-mix(in oklch, var(--color-signal) 30%, transparent);
+    background-color: color-mix(in oklch, var(--color-warn) 42%, transparent);
     color: var(--color-ink);
   }
   * {
@@ -80,24 +93,27 @@
     scrollbar-color: var(--color-line-bright) transparent;
   }
   ::-webkit-scrollbar {
-    width: 11px;
-    height: 11px;
+    width: 12px;
+    height: 12px;
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--color-line);
+    background: var(--color-line-bright);
     border-radius: 9999px;
     border: 3px solid var(--color-void);
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-line-bright);
+    background: var(--color-ink-faint);
   }
   :focus-visible {
-    outline: 2px solid color-mix(in oklch, var(--color-signal) 80%, transparent);
+    outline: 2px solid var(--color-ink);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: 1px;
   }
 }
 
+/* ===================================================================== */
+/*  Atmosphere — printed writing paper: warmth, ruled lines, grain       */
+/* ===================================================================== */
 .atmosphere {
   position: fixed;
   inset: 0;
@@ -105,78 +121,100 @@
   pointer-events: none;
   background:
     radial-gradient(
-      72% 52% at 50% -12%,
-      color-mix(in oklch, var(--color-signal) 11%, transparent),
-      transparent 70%
+      60% 48% at 50% -8%,
+      color-mix(in oklch, var(--color-warn) 13%, transparent),
+      transparent 68%
     ),
     radial-gradient(
-      62% 50% at 102% 112%,
-      color-mix(in oklch, var(--color-slop) 9%, transparent),
-      transparent 72%
+      54% 46% at 102% 110%,
+      color-mix(in oklch, var(--color-slop) 7%, transparent),
+      transparent 70%
     ),
     var(--color-void);
 }
+/* faint ruled-paper lines */
 .atmosphere::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(
-      to right,
-      color-mix(in oklch, var(--color-line) 60%, transparent) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      to bottom,
-      color-mix(in oklch, var(--color-line) 60%, transparent) 1px,
-      transparent 1px
-    );
-  background-size: 38px 38px;
-  -webkit-mask-image: radial-gradient(
-    82% 72% at 50% 28%,
-    #000 28%,
-    transparent 86%
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 37px,
+    color-mix(in oklch, var(--color-line) 55%, transparent) 37px,
+    color-mix(in oklch, var(--color-line) 55%, transparent) 38px
   );
-  mask-image: radial-gradient(82% 72% at 50% 28%, #000 28%, transparent 86%);
-  opacity: 0.55;
+  -webkit-mask-image: radial-gradient(
+    96% 80% at 50% 26%,
+    #000 30%,
+    transparent 90%
+  );
+  mask-image: radial-gradient(96% 80% at 50% 26%, #000 30%, transparent 90%);
+  opacity: 0.4;
 }
+/* paper grain */
 .atmosphere::after {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.04;
-  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  mix-blend-mode: multiply;
 }
 
+/* ===================================================================== */
+/*  Surface utilities                                                    */
+/* ===================================================================== */
+
+/* A printed sheet: solid paper, hairline border, hard offset ink shadow. */
 @utility glass {
-  background: color-mix(in oklch, var(--color-panel) 58%, transparent);
-  backdrop-filter: blur(16px) saturate(150%);
-  -webkit-backdrop-filter: blur(16px) saturate(150%);
-  border: 1px solid
-    color-mix(in oklch, var(--color-line-bright) 65%, transparent);
-  box-shadow:
-    inset 0 1px 0 0 color-mix(in oklch, #fff 7%, transparent),
-    0 24px 70px -34px #000;
+  background: var(--color-panel);
+  border: 1px solid var(--color-line-bright);
+  box-shadow: 4px 4px 0 0 color-mix(in oklch, var(--color-ink) 88%, transparent);
 }
 @utility panel {
   background: var(--color-panel);
   border: 1px solid var(--color-line);
 }
 
-@utility text-glow-signal {
-  text-shadow: 0 0 20px
-    color-mix(in oklch, var(--color-signal) 55%, transparent);
+/* hard "printed" offset shadow + tactile press on hover */
+@utility shadow-print {
+  box-shadow: 4px 4px 0 0 var(--color-ink);
 }
-@utility text-glow-slop {
-  text-shadow: 0 0 20px color-mix(in oklch, var(--color-slop) 50%, transparent);
+@utility shadow-print-sm {
+  box-shadow: 2px 2px 0 0 var(--color-ink);
 }
-@utility ring-glow-signal {
-  box-shadow:
-    0 0 0 1px color-mix(in oklch, var(--color-signal) 45%, transparent),
-    0 0 34px -8px color-mix(in oklch, var(--color-signal) 55%, transparent);
+@utility shadow-print-slop {
+  box-shadow: 4px 4px 0 0 var(--color-slop);
 }
 
+/* rubber-stamp chip */
+@utility stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  border: 1.5px solid currentColor;
+  border-radius: 0.2rem;
+  padding: 0.15rem 0.5rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  line-height: 1;
+}
+
+/* legacy glow utilities, repurposed as restrained letterpress */
+@utility text-glow-signal {
+  text-shadow: 0 1px 0 color-mix(in oklch, var(--color-void) 70%, transparent);
+}
+@utility text-glow-slop {
+  text-shadow: 0 1px 0 color-mix(in oklch, var(--color-void) 70%, transparent);
+}
+@utility ring-glow-signal {
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-signal) 34%, transparent);
+}
+
+/* highlighter sweep (used on the input sheet) */
 @utility scan-sweep {
   position: relative;
   overflow: hidden;
@@ -184,21 +222,50 @@
 .scan-sweep::after {
   content: '';
   position: absolute;
-  inset: -50% -10%;
+  inset: -40% -10%;
   background: linear-gradient(
     180deg,
     transparent 0%,
-    color-mix(in oklch, var(--color-signal) 9%, transparent) 48%,
-    color-mix(in oklch, var(--color-signal) 16%, transparent) 50%,
-    transparent 52%
+    color-mix(in oklch, var(--color-warn) 14%, transparent) 49%,
+    color-mix(in oklch, var(--color-warn) 22%, transparent) 50%,
+    transparent 51%
   );
-  animation: scan 7.5s linear infinite;
+  animation: sweep 8s linear infinite;
   pointer-events: none;
 }
 
 @utility animate-rise {
   animation: rise 0.72s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: var(--rise-delay, 0ms);
+}
+
+/* red-pen strike-through that draws on load */
+@utility pen-strike {
+  position: relative;
+  white-space: nowrap;
+}
+.pen-strike::after {
+  content: '';
+  position: absolute;
+  left: -0.06em;
+  right: -0.06em;
+  top: 54%;
+  height: 0.09em;
+  background: var(--color-slop);
+  border-radius: 9999px;
+  transform: scaleX(0) rotate(-1.4deg);
+  transform-origin: left center;
+  animation: strike 0.62s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+  animation-delay: var(--strike-delay, 760ms);
+  box-shadow: 0 0.04em 0 color-mix(in oklch, var(--color-slop) 35%, transparent);
+}
+
+/* dotted leader line for report rows */
+@utility leader {
+  flex: 1 1 auto;
+  margin: 0 0.5rem;
+  border-bottom: 1px dotted var(--color-line-bright);
+  transform: translateY(-0.22em);
 }
 
 @keyframes rise {
@@ -211,7 +278,15 @@
     transform: translateY(0);
   }
 }
-@keyframes scan {
+@keyframes strike {
+  from {
+    transform: scaleX(0) rotate(-1.4deg);
+  }
+  to {
+    transform: scaleX(1) rotate(-1.4deg);
+  }
+}
+@keyframes sweep {
   0% {
     transform: translateY(-100%);
   }
@@ -234,17 +309,15 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.45;
+    opacity: 0.4;
   }
 }
 @keyframes status-pulse {
   0% {
-    box-shadow: 0 0 0 0
-      color-mix(in oklch, var(--color-signal) 55%, transparent);
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--color-signal) 55%, transparent);
   }
   70% {
-    box-shadow: 0 0 0 5px
-      color-mix(in oklch, var(--color-signal) 0%, transparent);
+    box-shadow: 0 0 0 5px color-mix(in oklch, var(--color-signal) 0%, transparent);
   }
   100% {
     box-shadow: 0 0 0 0 color-mix(in oklch, var(--color-signal) 0%, transparent);
@@ -269,5 +342,8 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+  .pen-strike::after {
+    transform: scaleX(1) rotate(-1.4deg);
   }
 }
